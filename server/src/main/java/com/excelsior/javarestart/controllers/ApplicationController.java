@@ -17,15 +17,12 @@
 */
 package com.excelsior.javarestart.controllers;
 
+import com.excelsior.javarestart.appresourceprovider.AppResourceProvider;
 import com.excelsior.javarestart.appresourceprovider.ResourceNotFoundException;
-import com.excelsior.javarestart.appresourceprovider.SimpleResourceProvider;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -41,25 +38,40 @@ public class ApplicationController {
     @Value("${apps.path}")
     private String rootDir;
 
-    private HashMap<String, SimpleResourceProvider> projectLoader = new HashMap<String, SimpleResourceProvider>();
+    private HashMap<String, AppResourceProvider> projectLoader = new HashMap<String, AppResourceProvider>();
 
     Logger logger = Logger.getLogger(ApplicationController.class.getName());
 
-	@RequestMapping(value = "/{applicationName}", params ={"resource"} ,method = RequestMethod.GET)
-	public void loadResource(@RequestParam(value = "resource") String resourceName, @PathVariable("applicationName") String applicationName, HttpServletResponse response) throws Exception {
-        SimpleResourceProvider cl = projectLoader.get(applicationName);
-        if (cl == null) {
+    private AppResourceProvider getOrRegisterApp(String applicationName) {
+        AppResourceProvider resourceProvider = projectLoader.get(applicationName);
+        if (resourceProvider == null) {
             try {
-                cl = new SimpleResourceProvider(rootDir, applicationName);
-                projectLoader.put(applicationName, cl);
+                resourceProvider = new AppResourceProvider(rootDir, applicationName);
+                projectLoader.put(applicationName, resourceProvider);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.warning(e.toString());
             }
         }
+        return resourceProvider;
+    }
 
+    @ResponseBody
+    @RequestMapping(value = "/{applicationName}", method = RequestMethod.GET)
+    public String getMain(@PathVariable("applicationName") String applicationName, HttpServletResponse response) throws Exception {
+        AppResourceProvider resourceProvider = getOrRegisterApp(applicationName);
+        if (resourceProvider == null) {
+            response.sendError(404);
+            return null;
+        }
+        return resourceProvider.getMain();
+    }
+
+	@RequestMapping(value = "/{applicationName}", params ={"resource"} ,method = RequestMethod.GET)
+	public void loadResource(@RequestParam(value = "resource") String resourceName, @PathVariable("applicationName") String applicationName, HttpServletResponse response) throws Exception {
+        AppResourceProvider resourceProvider = getOrRegisterApp(applicationName);
         InputStream resource = null;
         try {
-            resource = cl.load(resourceName);
+            resource = resourceProvider.load(resourceName);
             IOUtils.copy(resource, response.getOutputStream());
             response.flushBuffer();
             logger.info("Class or resource loaded: " + resourceName);

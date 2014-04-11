@@ -18,7 +18,11 @@
 package com.excelsior.javarestart;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class Main {
 
@@ -54,9 +58,25 @@ public class Main {
 
     }
 
+    public static String getText(String url) throws IOException {
+        URL website = new URL(url);
+        URLConnection connection = website.openConnection();
+        try (LineNumberReader in = new LineNumberReader(
+                    new InputStreamReader(
+                            connection.getInputStream())))
+        {
+            StringBuilder response = new StringBuilder();
+            String inputLine;
+            while ((inputLine = in.readLine()) != null)
+                response.append(inputLine);
+
+            return response.toString();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
-            System.out.println("Usage: <URL> <MainClass>");
+        if (args.length < 1) {
+            System.out.println("Usage: <URL> {<MainClass>}");
             return;
         }
 
@@ -71,9 +91,15 @@ public class Main {
 
         AppClassloader loader = new AppClassloader(args[0]);
         Thread.currentThread().setContextClassLoader(loader);
-        Class mainClass = loader.loadClass(args[1]);
-        Method main = mainClass.getMethod("main", String[].class);
-        main.setAccessible(true);
-        main.invoke(null, new Object[]{new String[0]});
+        String main;
+        if (args.length < 2) {
+             main = getText(args[0]);
+        } else {
+             main = args[1];
+        }
+        Class mainClass = loader.loadClass(main);
+        Method mainMethod = mainClass.getMethod("main", String[].class);
+        mainMethod.setAccessible(true);
+        mainMethod.invoke(null, new Object[]{new String[0]});
     }
 }

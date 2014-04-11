@@ -38,7 +38,14 @@ public class JavaRestartDemo extends Application {
         stage.show();
     }
 
+    public static String host;
+
     public static void main(String[] args) {
+        if (args.length != 0) {
+            host = args[0];
+        } else {
+            host = "http://localhost:8080/";
+        }
         launch(args);
     }
     

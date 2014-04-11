@@ -34,28 +34,13 @@ import javafx.scene.control.Label;
 public class JavaRestartDemoController implements Initializable {
     
     @FXML
-    private Label label;
-
-    private static final String host = "http://localhost:8080";
-
-    @FXML
     public void handleButtonAction(ActionEvent event) {
-        String args[];
-        switch (((Button)event.getSource()).getId()){
-            case "SwingSet2": args = new String[]{host + "/SwingSet2/", "SwingSet2"}; break;
-            case "Java2Demo": args = new String[]{host + "/Java2Demo/",  "java2d/Java2Demo"}; break;
-            case "Ensemble" : args = new String[]{host + "/javafx/",  "ensemble/Ensemble2"}; break;
-            case "BrickBreaker": args = new String[]{host + "/BrickBreaker/",  " brickbreaker/Main"}; break;
-            case "Jenesis": args = new String[]{host + "/jenesis/",  "jenesis/Main"}; break;
-            case "SWT": args = new String[]{host + "/swt/",  "org/eclipse/swt/examples/controlexample/ControlExample"}; break;
-            default: throw new AssertionError();
-        }
+        String args[] = new String[] {JavaRestartDemo.host + ((Button)event.getSource()).getId()};
         Main.fork(args);
     }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
+    }
     
 }
