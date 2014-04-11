@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/2.2"
+            xmlns:fx="http://javafx.com/fxml"
+            id="AnchorPane"
+            maxHeight="1.7976931348623157E308" 
+            maxWidth="1.7976931348623157E308"
+            minHeight="-Infinity"
+            minWidth="-Infinity"
+            prefHeight="400.0"
+            prefWidth="600.0"
+            rotate="0.0"
+            snapToPixel="true"
+            fx:controller="com.excelsior.javarestart.demo.JavaRestartDemoController">
+  <children>
+    <Pane prefHeight="372.0" prefWidth="590.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+        <Button fx:id="SwingSet2" onAction="#handleButtonAction"  layoutX="63.0" layoutY="256.0" mnemonicParsing="false" prefHeight="54.6204833984375" prefWidth="146.0001220703125" text="SwingSet2" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS">
+          <font>
+            <Font size="20.0" fx:id="x1"/>
+          </font>
+        </Button>
+        <Button fx:id="Java2Demo" onAction="#handleButtonAction" font="$x1" layoutX="63.0" layoutY="193.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="146.0001220703125" text="Java2Demo" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+        <Button  fx:id="BrickBreaker" onAction="#handleButtonAction" font="$x1" layoutX="224.0" layoutY="129.0" mnemonicParsing="false" prefHeight="54.620361328125" prefWidth="146.0" text="BrickBreaker" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+        <Text layoutX="260.0" layoutY="72.0" scaleX="7.765235363215219" scaleY="5.985805355081321" strokeType="OUTSIDE" strokeWidth="0.0" text="Java ReStart" textAlignment="CENTER">
+          <font>
+            <Font name="SimHei" size="8.0" />
+          </font>
+        </Text>
+        <Button  fx:id="Ensemble"  onAction="#handleButtonAction"  font="$x1" layoutX="63.0" layoutY="128.0" mnemonicParsing="false" prefHeight="54.6204833984375" prefWidth="146.00009155273438" text="Ensemble" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+        <Button  fx:id="Jenesis" onAction="#handleButtonAction" font="$x1" layoutX="224.0" layoutY="193.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="146.0" text="Jenesis" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="407.0" layoutY="138.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@java-duke-guitar.png" />
+          </image>
+        </ImageView>
+        <Button fx:id="SWT" onAction="#handleButtonAction" font="$x1" layoutX="224.0" layoutY="256.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="146.0" text="SWT" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+      </children>
+    </Pane>
+  </children>
+</AnchorPane>
