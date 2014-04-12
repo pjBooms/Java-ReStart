@@ -40,8 +40,8 @@ How to run
 The sources come with a demo sustaining the concept.
 
 First you need to run the server in an application server of your choice (Tomcat, Jetty, whatever).
-Before the run you should setup demo applications: unzip apps.zip to a directory (say <AppRoot>) and 
-correct server/src/main/resources/application.properties apps.path property pointing to <AppRoot>.
+Before the run you should setup demo applications: unzip apps.zip to a directory (say [AppRoot]) and 
+correct server/src/main/resources/application.properties apps.path property pointing to [AppRoot].
 apps.zip contains six Java UI applications with the descriptions (app.properties): 
   * Java2Demo - standard AWT/Java2D demo, 
   * SwingSet2 - standard Swing demo, 
