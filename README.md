@@ -45,7 +45,7 @@ correct server/src/main/resources/application.properties apps.path property poin
 apps.zip contains six Java UI applications with the descriptions (app.properties): 
   * Java2Demo - standard AWT/Java2D demo, 
   * SwingSet2 - standard Swing demo, 
-  * SWT - demo showing SWT standard control,
+  * SWT - demo showing SWT standard controls,
   * Jenesis - Sega Genesis emulator written using Java OpenGL (jogl),
   * BrickBreaker - JavaFX arcanoid game demo
   * Ensemble - standard JavaFX ensemble demo
