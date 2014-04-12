@@ -18,14 +18,18 @@ The server gives classes/resources of an application on a request and the client
 and executes the application in parallel with downloading.
 The server has a very simple REST interface now:
 
+```
 GET /{application} -- returns a main class name of an application (entry point)
 GET /{application}/?resource={resource} -- returns a class/resource of a referenced application
+```
 
 The client in turn has a very simple command line interface:
 
+```
 java com.excelsior.javarestart.Main <URL>
+```
 
-where URL has a form <Host>/<AppName>.
+where URL has a form [Host]/[AppName].
 
 First, the client asks the main class of an application then it downloads main class and loads it using a classloader that tries to emulate default JVM application classloader 
 but instead of loading the classes from HDD it fetches them from URL using REST interface above. 
@@ -39,22 +43,23 @@ First you need to run the server in an application server of your choice (Tomcat
 Before the run you should setup demo applications: unzip apps.zip to a directory (say <AppRoot>) and 
 correct server/src/main/resources/application.properties apps.path property pointing to <AppRoot>.
 apps.zip contains six Java UI applications with the descriptions (app.properties): 
-  -- Java2Demo - standard AWT/Java2D demo, 
-  -- SwingSet2 - standard Swing demo, 
-  -- SWT - demo showing SWT standard control,
-  -- Jenesis - Sega Genesis emulator written using Java OpenGL (jogl),
-  -- BrickBreaker - JavaFX arcanoid game demo
-  -- Ensemble - standard JavaFX ensemble demo
+  * Java2Demo - standard AWT/Java2D demo, 
+  * SwingSet2 - standard Swing demo, 
+  * SWT - demo showing SWT standard control,
+  * Jenesis - Sega Genesis emulator written using Java OpenGL (jogl),
+  * BrickBreaker - JavaFX arcanoid game demo
+  * Ensemble - standard JavaFX ensemble demo
 
 After launching the server, you may run the apps using
-
+```
 java com.excelsior.javarestart.Main http://localhost:8080/<AppName> 
+```
 command (URL example -- http://localhost:8080/Java2Demo).
 
 Or you may run JavaFX demo that in turn will run the demos above by itself (located in "demo" folder):
-
+```
 java com.excelsior.javarestart.demo.JavaRestartDemo
-
+```
 
 Run Notes:
 Ensemble demo does not work with Java 8 now and with Java 7 it does not load all resources that are referenced by the demo (f.i. it does not load "close" button icon).
@@ -63,12 +68,13 @@ JavaRestartDemo is forking JVM to run demos and the way it forks JVM can work on
 
 Adding your own applications
 =====
-To add your own application that you would like to launch from Internet you need to put it to a subfolder of <AppRoot> folder 
+To add your own application that you would like to launch from Internet you need to put it to a subfolder of [AppRoot] folder 
 and provide app.properties where you describe main class and classpath of your application (see apps.zip applications for example). 
 After that you may launch it with the client:
 
+```
 java com.excelsior.javarestart.Main <Host>/<AppName>
-
+```
 TODO
 =====
 1. Implement caching of downloaded classes by the client 
