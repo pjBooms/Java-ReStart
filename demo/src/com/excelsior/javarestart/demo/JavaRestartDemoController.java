@@ -20,12 +20,11 @@ package com.excelsior.javarestart.demo;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.excelsior.javarestart.Main;
+import com.excelsior.javarestart.JavaRestartLauncher;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 
 /**
  *
@@ -36,7 +35,7 @@ public class JavaRestartDemoController implements Initializable {
     @FXML
     public void handleButtonAction(ActionEvent event) {
         String args[] = new String[] {JavaRestartDemo.host + ((Button)event.getSource()).getId()};
-        Main.fork(args);
+        JavaRestartLauncher.fork(args);
     }
     
     @Override

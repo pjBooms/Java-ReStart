@@ -24,17 +24,17 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class Main {
+public class JavaRestartLauncher {
 
-    public static void fork(String args[])  {
+    public static void fork(String ... args)  {
 
         String javaHome = System.getProperty("java.home");
         System.out.println(javaHome);
-        String codeSource = Main.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm().substring(6);
+        String codeSource = JavaRestartLauncher.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm().substring(6);
         String fxrt = javaHome + "\\lib\\jfxrt.jar";
         String classpath = "\"" + codeSource + ";" + fxrt + "\"";
         System.out.println(codeSource);
-        String javaLauncher = "\"" + javaHome + "\\bin\\javaw.exe\"" + " -Dbinary.css=false -cp " + classpath + " " + Main.class.getName();
+        String javaLauncher = "\"" + javaHome + "\\bin\\javaw.exe\"" + " -Dbinary.css=false -cp " + classpath + " " + JavaRestartLauncher.class.getName();
         for (String arg: args) {
             javaLauncher = javaLauncher + " " + arg;
         }
