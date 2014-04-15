@@ -44,7 +44,7 @@ public class JavaRestartDemo extends Application {
         if (args.length != 0) {
             host = args[0];
         } else {
-            host = "http://localhost:8080/";
+            host = "http://localhost:8080/apps/";
         }
         launch(args);
     }

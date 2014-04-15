@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?language javascript?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+
+
+<GridPane xmlns:fx="http://javafx.com/fxml"
+          fx:id="gridpane" 
+          alignment="center" hgap="10" vgap="10" styleClass="root">
+
+    <padding>
+        <Insets top="25" right="25" bottom="10" left="25"/>
+    </padding>
+
+    <Text text="%welcome" id="welcome-text"
+          GridPane.columnIndex="0" GridPane.rowIndex="0"
+          GridPane.columnSpan="2"/>
+ 
+    <Label text="%username"
+           GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+ 
+    <TextField  fx:id="usernameField" 
+                GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+ 
+    <Label text="%password"
+           GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+ 
+    <PasswordField fx:id="passwordField" 
+                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    
+    <HBox spacing="10" alignment="bottom_right" 
+          GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <Button text="Sign In"     
+                onAction="handleSubmitButtonAction(event);"/>
+    </HBox>
+
+    <Text fx:id="actiontarget"
+          GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+    
+    <stylesheets>
+        <URL value="@login.css"/>
+    </stylesheets>
+
+    <fx:script>
+
+var jString = Packages.java.lang.String;
+var $webfx = {title: "%title"};
+
+function handleSubmitButtonAction() {
+    var user = usernameField.getText();
+
+    var welcomeMessage = $webfx.i18n.getString("welcomeMessage");
+    welcomeMessage = jString.format(welcomeMessage, user);
+    actiontarget.setText(welcomeMessage);
+
+    // example of the NavigationContext feature
+    if (user === "metronome") {
+        $webfx.navigation.goTo("../metronome/metronome.fxml");
+    }
+}
+        
+    </fx:script>
+
+</GridPane>
