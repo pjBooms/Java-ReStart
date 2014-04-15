@@ -95,3 +95,8 @@ TODO
    The REST API interface should also be changed to support custom classloaders class references 
    (besides class names, the server should also get a classloader ID to know by which classloader the class should be loaded).
 6. Test the technology against Netbeans/IDEA/Eclipse
+
+Nominations
+=====
+The project has won in "Tech" nomination of HackDay #29 hackathon (www.hackday.ru). The pitch video is here (in Russian):
+http://vk.com/video-45718857_166854884
