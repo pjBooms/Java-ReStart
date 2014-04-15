@@ -73,12 +73,12 @@ JavaRestartDemo is forking JVM to run demos and the way it forks JVM can work on
 
 Adding your own applications
 =====
-To add your own application that you would like to launch from Internet you need to put it to a subfolder of [AppRoot] folder 
-and provide app.properties where you describe main class and classpath of your application (see apps.zip applications for example). 
+To add your own application that you would like to launch from Internet you need to put it to a subfolder of apps folder 
+and provide app.properties where you describe main class and classpath of your application (see other applications located in apps for example). 
 After that you may launch it with the client:
 
 ```
-java com.excelsior.javarestart.Main <Host>/<AppName>
+java com.excelsior.javarestart.Main <BaseURL>/<AppName>
 ```
 TODO
 =====
