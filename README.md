@@ -26,7 +26,7 @@ GET /{application}?resource={resource} -- returns a class/resource of a referenc
 The client in turn has a very simple command line interface:
 
 ```
-java com.excelsior.javarestart.Main <URL>
+java com.excelsior.javarestart.JavaRestartLauncher <URL>
 ```
 
 where URL has a form [BaseURL]/[AppName].
@@ -53,7 +53,7 @@ apps contains the following Java UI applications with the descriptions (app.prop
 
 After launching the server, you may run the apps using
 ```
-java com.excelsior.javarestart.Main http://localhost:8080/apps/<AppName> 
+java com.excelsior.javarestart.JavaRestartLauncher http://localhost:8080/apps/<AppName> 
 ```
 command (URL example -- http://localhost:8080/apps/Java2Demo).
 
@@ -78,7 +78,7 @@ and provide app.properties where you describe main class and classpath of your a
 After that you may launch it with the client:
 
 ```
-java com.excelsior.javarestart.Main <BaseURL>/<AppName>
+java com.excelsior.javarestart.JavaRestartLauncher <BaseURL>/<AppName>
 ```
 TODO
 =====
