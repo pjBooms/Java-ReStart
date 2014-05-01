@@ -36,16 +36,31 @@ import java.util.logging.Logger;
 public class ApplicationController {
 
     @Value("${apps.path}")
+    private String appsPath;
+
     private String rootDir;
 
     private HashMap<String, AppResourceProvider> projectLoader = new HashMap<String, AppResourceProvider>();
 
     Logger logger = Logger.getLogger(ApplicationController.class.getName());
 
+    private void initRootDir() {
+        if (rootDir == null) {
+            if (appsPath.startsWith("${user.home}")) {
+                rootDir = System.getProperty("user.home") + appsPath.substring("${user.home}".length());
+                logger.info(rootDir);
+            } else {
+                rootDir = appsPath;
+            }
+
+        }
+    }
+
     private AppResourceProvider getOrRegisterApp(String applicationName) {
         AppResourceProvider resourceProvider = projectLoader.get(applicationName);
         if (resourceProvider == null) {
             try {
+                initRootDir();
                 resourceProvider = new AppResourceProvider(rootDir, applicationName);
                 projectLoader.put(applicationName, resourceProvider);
             } catch (Exception e) {

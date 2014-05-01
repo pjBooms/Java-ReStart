@@ -63,13 +63,30 @@ java com.excelsior.javarestart.demo.JavaRestartDemo
 ```
 
 You can also run the samples from forked version of Bruno Borges WebFX browser 
-(https://github.com/pjBooms/webfx, branch java-restart-convergion): 
-point the browser to http://localhost:8080 and click Java Restart Demo link.
+(https://github.com/pjBooms/webfx): 
+point the browser to http://localhost:8080 and click "Java Restart Demo" link.
 
 Run Notes:
 Ensemble demo does not work with Java 8 now and with Java 7 it does not load all resources that are referenced by the demo (f.i. it does not load "close" button icon).
 SWT, Jenesis can run only with 32-bit JRE on Windows (they are using 32-bit native libraries).
 JavaRestartDemo is forking JVM to run demos and the way it forks JVM can work on Windows only.
+
+Java ReStart on Jelastic
+=====
+The Java ReStart server with the sample applications is deployed now on Jelastic Cloud:
+
+http://javarestart.jelasticloud.com/
+
+So you may run the samples above now with just Java ReStart client (no need to deploy on local server):
+
+```
+java com.excelsior.javarestart.JavaRestartLauncher http://javarestart.jelasticloud.com/apps/<AppName> 
+```
+
+Or via my fork of WebFX browser:
+
+point the browser to http://javarestart.jelasticloud.com and click "Java Restart Demo" link.
+
 
 Adding your own applications
 =====

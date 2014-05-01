@@ -49,7 +49,7 @@
         var $webfx = {title: "JavaRestartDemo"};
 
         function handleButtonAction(event) {
-             $webfx.navigation.launch("java://localhost:8080/apps/" + event.getSource().getId());
+             $webfx.navigation.launch("../apps/" + event.getSource().getId());
         }
 
      </fx:script>
