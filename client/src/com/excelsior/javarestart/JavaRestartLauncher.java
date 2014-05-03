@@ -17,6 +17,7 @@
 */
 package com.excelsior.javarestart;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -34,7 +35,7 @@ public class JavaRestartLauncher {
         String fxrt = javaHome + "\\lib\\jfxrt.jar";
         String classpath = "\"" + codeSource + ";" + fxrt + "\"";
         System.out.println(codeSource);
-        String javaLauncher = "\"" + javaHome + "\\bin\\javaw.exe\"" + " -Dbinary.css=false -cp " + classpath + " " + JavaRestartLauncher.class.getName();
+        String javaLauncher = "\"" + javaHome + "\\bin\\javaw.exe\"" + " -splash:" + codeSource + "defaultSplash.gif" + " -Dbinary.css=false -cp " + classpath + " " + JavaRestartLauncher.class.getName();
         for (String arg: args) {
             javaLauncher = javaLauncher + " " + arg;
         }
@@ -97,6 +98,22 @@ public class JavaRestartLauncher {
         } else {
              main = args[1];
         }
+
+        //auto close splash after 45 seconds
+        (new Thread(){
+            @Override
+            public void run() {
+                try {
+                    sleep(45000);
+                } catch (InterruptedException e) {
+                }
+                SplashScreen scr = SplashScreen.getSplashScreen();
+                if ((scr!=null) && (scr.isVisible())) {
+                    scr.close();
+                }
+            }
+        }).start();
+
         Class mainClass = loader.loadClass(main);
         Method mainMethod = mainClass.getMethod("main", String[].class);
         mainMethod.setAccessible(true);
