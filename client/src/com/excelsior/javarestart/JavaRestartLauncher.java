@@ -17,11 +17,15 @@
 */
 package com.excelsior.javarestart;
 
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -32,10 +36,11 @@ public class JavaRestartLauncher {
         String javaHome = System.getProperty("java.home");
         System.out.println(javaHome);
         String codeSource = JavaRestartLauncher.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm().substring(6);
-        String fxrt = javaHome + "\\lib\\jfxrt.jar";
-        String classpath = "\"" + codeSource + ";" + fxrt + "\"";
+//        String fxrt = javaHome + "\\lib\\jfxrt.jar";
+        String classpath = System.getProperty("java.class.path");
+//        String classpath = "\"" + codeSource + ";" + fxrt + "\"";
         System.out.println(codeSource);
-        String javaLauncher = "\"" + javaHome + "\\bin\\javaw.exe\"" + " -splash:" + codeSource + "defaultSplash.gif" + " -Dbinary.css=false -cp " + classpath + " " + JavaRestartLauncher.class.getName();
+        String javaLauncher = "\"" + javaHome + "\\bin\\javaw.exe\"" + " -splash:" + codeSource + "defaultSplash.gif" + " -Dbinary.css=false -cp \"" + classpath + "\" " + JavaRestartLauncher.class.getName();
         for (String arg: args) {
             javaLauncher = javaLauncher + " " + arg;
         }
@@ -61,7 +66,7 @@ public class JavaRestartLauncher {
 
     public static String getText(String url) throws IOException {
         URL website = new URL(url);
-        URLConnection connection = website.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) website.openConnection();
         try (LineNumberReader in = new LineNumberReader(
                     new InputStreamReader(
                             connection.getInputStream())))
@@ -73,6 +78,10 @@ public class JavaRestartLauncher {
 
             return response.toString();
         }
+    }
+
+    public static JSONObject getJSON(String url) throws IOException {
+        return (JSONObject) JSONValue.parse(getText(url));
     }
 
     public static void main(String[] args) throws Exception {
@@ -93,14 +102,24 @@ public class JavaRestartLauncher {
         AppClassloader loader = new AppClassloader(args[0]);
         Thread.currentThread().setContextClassLoader(loader);
         String main;
+        JSONObject obj = getJSON(args[0]);
         if (args.length < 2) {
-             main = getText(args[0]);
+            main = (String) obj.get("main");
         } else {
-             main = args[1];
+            main = args[1];
+        }
+
+        String splash = (String) obj.get("splash");
+        if ( splash != null) {
+            SplashScreen scr = SplashScreen.getSplashScreen();
+            if (scr != null) {
+                URL url = loader.getResource(splash);
+                scr.setImageURL(url);
+            }
         }
 
         //auto close splash after 45 seconds
-        (new Thread(){
+        Thread splashClose = new Thread(){
             @Override
             public void run() {
                 try {
@@ -112,7 +131,9 @@ public class JavaRestartLauncher {
                     scr.close();
                 }
             }
-        }).start();
+        };
+        splashClose.setDaemon(true);
+        splashClose.start();
 
         Class mainClass = loader.loadClass(main);
         Method mainMethod = mainClass.getMethod("main", String[].class);

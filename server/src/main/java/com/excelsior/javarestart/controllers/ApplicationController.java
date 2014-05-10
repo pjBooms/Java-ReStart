@@ -19,6 +19,7 @@ package com.excelsior.javarestart.controllers;
 
 import com.excelsior.javarestart.appresourceprovider.AppResourceProvider;
 import com.excelsior.javarestart.appresourceprovider.ResourceNotFoundException;
+import com.excelsior.javarestart.model.dto.AppDescriptorDto;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -72,34 +74,29 @@ public class ApplicationController {
 
     @ResponseBody
     @RequestMapping(value = "/{applicationName}", method = RequestMethod.GET)
-    public String getMain(@PathVariable("applicationName") String applicationName, HttpServletResponse response) throws Exception {
+    public AppDescriptorDto getAppDescriptor(@PathVariable("applicationName") String applicationName, HttpServletResponse response) throws Exception {
         AppResourceProvider resourceProvider = getOrRegisterApp(applicationName);
         if (resourceProvider == null) {
             response.sendError(404);
             return null;
         }
-        return resourceProvider.getMain();
+        return resourceProvider.getAppDescriptor();
     }
 
 	@RequestMapping(value = "/{applicationName}", params ={"resource"} ,method = RequestMethod.GET)
 	public void loadResource(@RequestParam(value = "resource") String resourceName, @PathVariable("applicationName") String applicationName, HttpServletResponse response) throws Exception {
         AppResourceProvider resourceProvider = getOrRegisterApp(applicationName);
-        InputStream resource = null;
+        URLConnection resource = null;
         try {
             resource = resourceProvider.load(resourceName);
-            IOUtils.copy(resource, response.getOutputStream());
+            resource.connect();
+            response.setContentLength(resource.getContentLength());
+            IOUtils.copy(resource.getInputStream(), response.getOutputStream());
             response.flushBuffer();
             logger.info("Class or resource loaded: " + resourceName);
         }catch (ResourceNotFoundException e) {
             logger.warning(e.toString());
             response.sendError(404);
-        } finally {
-            try {
-                if (resource != null)
-                    resource.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
 	}
 

@@ -19,7 +19,7 @@ and executes the application in parallel with downloading.
 The server has a very simple REST interface now:
 
 ```
-GET /{application} -- returns a main class name of an application (entry point)
+GET /{application} -- returns an application descriptor in JSON format (main class name of the application (entry point), splash, etc.)
 GET /{application}?resource={resource} -- returns a class/resource of a referenced application
 ```
 
@@ -31,7 +31,8 @@ java com.excelsior.javarestart.JavaRestartLauncher <URL>
 
 where URL has a form [BaseURL]/[AppName].
 
-First, the client asks the main class of an application then it downloads main class and loads it using a classloader that tries to emulate default JVM application classloader 
+First, the client fetches an application descriptor, if a splash is scpecified in the descriptor the client downloads it and immediatly shows, 
+then it downloads main class of the application and loads it using a classloader that tries to emulate default JVM application classloader 
 but instead of loading the classes from HDD it fetches them from URL using REST interface above. 
 This way, only required classes/resources are downloaded by the client and application starts right from the first downloaded main class.
 

@@ -17,9 +17,12 @@
 */
 package com.excelsior.javarestart.appresourceprovider;
 
+import com.excelsior.javarestart.model.dto.AppDescriptorDto;
+
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
 import java.util.Properties;
 
 /**
@@ -27,17 +30,19 @@ import java.util.Properties;
  */
 public class AppResourceProvider {
 
-    private String main;
-
     private URLClassLoader loader;
 
     private static final String APP_PROPERTIES = "app.properties";
+
+    private AppDescriptorDto appDescriptor;
 
     public AppResourceProvider(String appPath, String projectName) throws Exception {
         Properties appProps = new Properties();
         File baseDir = new File(appPath, projectName);
         appProps.load(new BufferedInputStream(new FileInputStream(new File(baseDir, APP_PROPERTIES))));
-        main = appProps.getProperty("main");
+        appDescriptor = new AppDescriptorDto();
+        appDescriptor.setMain(appProps.getProperty("main"));
+        appDescriptor.setSplash(appProps.getProperty("splash"));
         String classPath[] = appProps.getProperty("classpath").split(";");
         URL[] urls = new URL[classPath.length];
         for (int i = 0; i < classPath.length; i++) {
@@ -46,20 +51,19 @@ public class AppResourceProvider {
         loader = new URLClassLoader(urls);
     }
 
-    public String getMain() {
-        return main;
-    }
-
-    public InputStream load(final String resourceName) throws ResourceNotFoundException {
+    public URLConnection load(final String resourceName) throws ResourceNotFoundException {
         try {
             URL result = loader.findResource(resourceName);
             if (result == null) {
                 throw new ResourceNotFoundException("Requested resource not found: "+ resourceName);
             }
-            return result.openStream();
+            return result.openConnection();
         } catch (IOException e) {
             throw new ResourceNotFoundException("Requested resource not found: "+ resourceName, e);
         }
     }
 
+    public AppDescriptorDto getAppDescriptor() {
+        return appDescriptor;
+    }
 }
