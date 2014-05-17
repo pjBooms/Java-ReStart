@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with Java ReStart.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
 package com.excelsior.javarestart;
@@ -21,6 +21,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -31,16 +32,23 @@ import java.net.URLConnection;
 
 public class JavaRestartLauncher {
 
+    private static File splashLocation;
+
     public static void fork(String ... args)  {
 
         String javaHome = System.getProperty("java.home");
         System.out.println(javaHome);
-        String codeSource = JavaRestartLauncher.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm().substring(6);
-//        String fxrt = javaHome + "\\lib\\jfxrt.jar";
+        if (splashLocation == null) {
+            File codeSource = new File(JavaRestartLauncher.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm().substring(6));
+            System.out.println(codeSource);
+            if (codeSource.isDirectory()) {
+                splashLocation = new File (codeSource, "defaultSplash.gif");
+            } else {
+                splashLocation = Utils.fetchResourceToTempFile("defaultSplash", ".gif", JavaRestartLauncher.class.getClassLoader().getResource("defaultSplash.gif"));
+            }
+        }
         String classpath = System.getProperty("java.class.path");
-//        String classpath = "\"" + codeSource + ";" + fxrt + "\"";
-        System.out.println(codeSource);
-        String javaLauncher = "\"" + javaHome + "\\bin\\javaw.exe\"" + " -splash:" + codeSource + "defaultSplash.gif" + " -Dbinary.css=false -cp \"" + classpath + "\" " + JavaRestartLauncher.class.getName();
+        String javaLauncher = "\"" + javaHome + "\\bin\\javaw.exe\"" + " -splash:" + splashLocation.getAbsolutePath() + " -Dbinary.css=false -cp \"" + classpath + "\" " + JavaRestartLauncher.class.getName();
         for (String arg: args) {
             javaLauncher = javaLauncher + " " + arg;
         }

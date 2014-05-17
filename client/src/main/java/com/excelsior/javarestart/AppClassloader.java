@@ -37,19 +37,10 @@ public class AppClassloader extends URLClassLoader {
         this.local = this.baseURL.getProtocol().equals("file");
     }
 
-    private void copy(InputStream in, OutputStream out) throws IOException {
-        int nRead;
-        byte[] data = new byte[16384];
-
-        while ((nRead = in.read(data, 0, data.length)) != -1) {
-            out.write(data, 0, nRead);
-        }
-    }
-
     private Class tryToLoadClass(InputStream in) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-        copy(in, buffer);
+        Utils.copy(in, buffer);
         buffer.flush();
 
         byte buf[] = buffer.toByteArray();
@@ -67,12 +58,9 @@ public class AppClassloader extends URLClassLoader {
 
     @Override
     public URL findResource(String name) {
-        URL url =null;
-
+        String resName = local ? name : "?resource=" + name;
         try {
-            url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), baseURL.getPath() +
-                    (local ? name : "?resource=" + name));
-            return url;
+            return new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), baseURL.getPath() + "/" + resName);
         } catch (MalformedURLException e) {
             return null;
         }
@@ -80,19 +68,7 @@ public class AppClassloader extends URLClassLoader {
 
     @Override
     protected String findLibrary(String libname) {
-        File temp = null;
-        try {
-            temp = File.createTempFile(libname, ".dll");
-        } catch (IOException e) {
-            return null;
-        }
-        temp.deleteOnExit();
-        try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(temp)))
-        {
-            copy(findResource(libname + ".dll").openStream(), os);
-        } catch (IOException e) {
-            return null;
-        }
-        return temp.getAbsolutePath();
+        File temp = Utils.fetchResourceToTempFile(libname, ".dll", findResource(libname + ".dll"));
+        return temp ==  null? null: temp.getAbsolutePath();
     }
 }
