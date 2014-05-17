@@ -30,7 +30,7 @@ public class JavaRestartDemo extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("JavaRestartDemo.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/JavaRestartDemo.fxml"));
         
         Scene scene = new Scene(root);
         
