@@ -16,7 +16,7 @@
             prefWidth="600.0"
             rotate="0.0"
             snapToPixel="true"
-            fx:controller="com.excelsior.javarestart.demo.JavaRestartDemoController">
+            fx:controller="javarestart.demo.JavaRestartDemoController">
   <children>
     <Pane prefHeight="372.0" prefWidth="590.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>

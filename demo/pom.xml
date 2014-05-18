@@ -18,7 +18,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>com.excelsior.javarestart.demo.JavaRestartDemo</mainClass>
+        <mainClass>javarestart.demo.JavaRestartDemo</mainClass>
     </properties>
 
     <dependencies>

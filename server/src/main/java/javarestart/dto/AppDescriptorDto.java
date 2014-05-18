@@ -12,20 +12,36 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with Java ReStart.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package com.excelsior.javarestart.appresourceprovider;
+package javarestart.dto;
+
+import java.io.Serializable;
 
 /**
  * @author Nikita Lipsky
  */
-public class ResourceNotFoundException extends Exception {
-    public ResourceNotFoundException(String message, Exception e) {
-        super(message, e);
+public class AppDescriptorDto implements Serializable {
+
+    private static final long serialVersionUID = 6961550511933662410L;
+
+    private String main;
+    private String splash;
+
+    public String getMain() {
+        return main;
     }
 
-    public ResourceNotFoundException(String messsage) {
-        super(messsage);
+    public void setMain(String main) {
+        this.main = main;
+    }
+
+    public String getSplash() {
+        return splash;
+    }
+
+    public void setSplash(String splash) {
+        this.splash = splash;
     }
 }

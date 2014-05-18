@@ -15,12 +15,12 @@
  *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package com.excelsior.javarestart.demo;
+package javarestart.demo;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.excelsior.javarestart.JavaRestartLauncher;
+import javarestart.JavaRestartLauncher;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

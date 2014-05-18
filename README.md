@@ -26,7 +26,7 @@ GET /{application}?resource={resource} -- returns a class/resource of a referenc
 The client in turn has a very simple command line interface:
 
 ```
-java com.excelsior.javarestart.JavaRestartLauncher <URL>
+java javarestart.JavaRestartLauncher <URL>
 ```
 
 where URL has a form [BaseURL]/[AppName].
@@ -54,13 +54,13 @@ apps contains the following Java UI applications with the descriptions (app.prop
 
 After launching the server, you may run the apps using
 ```
-java com.excelsior.javarestart.JavaRestartLauncher http://localhost:8080/apps/<AppName> 
+java javarestart.JavaRestartLauncher http://localhost:8080/apps/<AppName> 
 ```
 command (URL example -- http://localhost:8080/apps/Java2Demo).
 
 Or you may run JavaFX demo that in turn will run the demos above by itself (located in "demo" folder):
 ```
-java com.excelsior.javarestart.demo.JavaRestartDemo
+java javarestart.demo.JavaRestartDemo
 ```
 
 You can also run the samples from forked version of Bruno Borges WebFX browser 
@@ -81,7 +81,7 @@ http://javarestart.jelasticloud.com/
 So you may run the samples above now with just Java ReStart client (no need to deploy on local server):
 
 ```
-java com.excelsior.javarestart.JavaRestartLauncher http://javarestart.jelasticloud.com/apps/<AppName> 
+java javarestart.JavaRestartLauncher http://javarestart.jelasticloud.com/apps/<AppName> 
 ```
 
 Or via my fork of WebFX browser:
@@ -96,7 +96,7 @@ and provide app.properties where you describe main class and classpath of your a
 After that you may launch it with the client:
 
 ```
-java com.excelsior.javarestart.JavaRestartLauncher <BaseURL>/<AppName>
+java javarestart.JavaRestartLauncher <BaseURL>/<AppName>
 ```
 TODO
 =====

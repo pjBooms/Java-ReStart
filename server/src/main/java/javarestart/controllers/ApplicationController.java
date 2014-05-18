@@ -15,18 +15,17 @@
  *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package com.excelsior.javarestart.controllers;
+package javarestart.controllers;
 
-import com.excelsior.javarestart.appresourceprovider.AppResourceProvider;
-import com.excelsior.javarestart.appresourceprovider.ResourceNotFoundException;
-import com.excelsior.javarestart.model.dto.AppDescriptorDto;
+import javarestart.appresourceprovider.AppResourceProvider;
+import javarestart.appresourceprovider.ResourceNotFoundException;
+import javarestart.dto.AppDescriptorDto;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.logging.Logger;

@@ -15,7 +15,7 @@
  *  along with Java ReStart.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package com.excelsior.javarestart;
+package javarestart;
 
 import java.io.*;
 import java.net.MalformedURLException;

@@ -15,9 +15,9 @@
  *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package com.excelsior.javarestart.appresourceprovider;
+package javarestart.appresourceprovider;
 
-import com.excelsior.javarestart.model.dto.AppDescriptorDto;
+import javarestart.dto.AppDescriptorDto;
 
 import java.io.*;
 import java.net.URL;

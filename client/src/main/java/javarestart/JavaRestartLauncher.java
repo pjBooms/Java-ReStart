@@ -15,7 +15,7 @@
  *  along with Java ReStart.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package com.excelsior.javarestart;
+package javarestart;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -28,7 +28,6 @@ import java.io.LineNumberReader;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
 public class JavaRestartLauncher {
 
