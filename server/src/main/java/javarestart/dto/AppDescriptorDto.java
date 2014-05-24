@@ -28,6 +28,7 @@ public class AppDescriptorDto implements Serializable {
 
     private String main;
     private String splash;
+    private String fxml;
 
     public String getMain() {
         return main;
@@ -43,5 +44,13 @@ public class AppDescriptorDto implements Serializable {
 
     public void setSplash(String splash) {
         this.splash = splash;
+    }
+
+    public String getFxml() {
+        return fxml;
+    }
+
+    public void setFxml(String fxml) {
+        this.fxml = fxml;
     }
 }

@@ -18,18 +18,16 @@
 package javarestart;
 
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class JavaRestartLauncher {
+public final class JavaRestartLauncher {
+    private JavaRestartLauncher() {
+    }
 
     private static File splashLocation;
 
@@ -47,6 +45,7 @@ public class JavaRestartLauncher {
                         ".gif", JavaRestartLauncher.class.getClassLoader().getResource("defaultSplash.gif"));
             }
         }
+
         String classpath = System.getProperty("java.class.path");
 
         final File javawPath;
@@ -71,46 +70,23 @@ public class JavaRestartLauncher {
                 + JavaRestartLauncher.class.getName();
 
         for (final String arg: args) {
-            javaLauncher = javaLauncher + " " + arg;
+            javaLauncher = javaLauncher + ' ' + arg;
         }
 
         System.out.println(javaLauncher);
 
         final String finalJavaLauncher = javaLauncher;
-        (new Thread(){
+
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     Runtime.getRuntime().exec(finalJavaLauncher).waitFor();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                } catch (final InterruptedException | IOException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
-
-
-    }
-
-    public static String getText(String url) throws IOException {
-        URL website = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) website.openConnection();
-        try (LineNumberReader in = new LineNumberReader(
-                    new InputStreamReader(
-                            connection.getInputStream())))
-        {
-            StringBuilder response = new StringBuilder();
-            String inputLine;
-            while ((inputLine = in.readLine()) != null)
-                response.append(inputLine);
-
-            return response.toString();
-        }
-    }
-
-    public static JSONObject getJSON(String url) throws IOException {
-        return (JSONObject) JSONValue.parse(getText(url));
     }
 
     public static void main(String[] args) throws Exception {
@@ -119,7 +95,7 @@ public class JavaRestartLauncher {
             return;
         }
 
-        if (args[0].equals("fork")) {
+        if ("fork".equals(args[0])) {
             String[] args2 = new String[args.length - 1];
             for (int i = 0; i < args.length -1; i++) {
                 args2[i] = args[i + 1];
@@ -128,10 +104,10 @@ public class JavaRestartLauncher {
             return;
         }
 
-        AppClassloader loader = new AppClassloader(args[0]);
+        AppClassLoader loader = new AppClassLoader(args[0]);
         Thread.currentThread().setContextClassLoader(loader);
         String main;
-        JSONObject obj = getJSON(args[0]);
+        JSONObject obj = AppUtils.getJSON(args[0]);
         if (args.length < 2) {
             main = (String) obj.get("main");
         } else {
@@ -139,7 +115,7 @@ public class JavaRestartLauncher {
         }
 
         String splash = (String) obj.get("splash");
-        if ( splash != null) {
+        if (splash != null) {
             SplashScreen scr = SplashScreen.getSplashScreen();
             if (scr != null) {
                 URL url = loader.getResource(splash);

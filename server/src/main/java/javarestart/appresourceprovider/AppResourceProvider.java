@@ -24,17 +24,17 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * @author Nikita Lipsky
  */
 public class AppResourceProvider {
-
-    private URLClassLoader loader;
-
+    private static final Pattern SEMICOLON = Pattern.compile(";");
     private static final String APP_PROPERTIES = "app.properties";
 
-    private AppDescriptorDto appDescriptor;
+    private final URLClassLoader loader;
+    private final AppDescriptorDto appDescriptor;
 
     public AppResourceProvider(String appPath, String projectName) throws Exception {
         Properties appProps = new Properties();
@@ -43,10 +43,11 @@ public class AppResourceProvider {
         appDescriptor = new AppDescriptorDto();
         appDescriptor.setMain(appProps.getProperty("main"));
         appDescriptor.setSplash(appProps.getProperty("splash"));
-        String classPath[] = appProps.getProperty("classpath").split(";");
+        appDescriptor.setFxml(appProps.getProperty("fxml"));
+        String classPath[] = SEMICOLON.split(appProps.getProperty("classpath"));
         URL[] urls = new URL[classPath.length];
         for (int i = 0; i < classPath.length; i++) {
-            urls[i] = new File(baseDir, classPath[i]).toURL();
+            urls[i] = new File(baseDir, classPath[i]).toURI().toURL();
         }
         loader = new URLClassLoader(urls);
     }

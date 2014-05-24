@@ -12,9 +12,6 @@ public enum OS {
     , UNKNOWN
     ;
 
-    //private static final String OS_NAME = System.getProperty("os.name").toLowerCase();
-
-
     private static final OS DETECTED_OS = getFromSystemProperties();
 
     public static OS get() {

@@ -17,6 +17,8 @@
 */
 package javarestart;
 
+import org.json.simple.JSONObject;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,50 +27,75 @@ import java.net.URLClassLoader;
 /**
  * @author Nikita Lipsky
  */
-public class AppClassloader extends URLClassLoader {
+public class AppClassLoader extends URLClassLoader {
 
     private URL baseURL;
 
     private boolean local;
+    private final JSONObject descriptor;
 
-    public AppClassloader(String baseURL) throws MalformedURLException {
+    public AppClassLoader(final URL baseURL) throws IOException {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
-        this.baseURL = new URL(baseURL);
+        this.baseURL = baseURL;
         this.local = this.baseURL.getProtocol().equals("file");
+        this.descriptor = AppUtils.getJSON(baseURL);
     }
 
-    private Class tryToLoadClass(InputStream in) throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    public AppClassLoader(String baseURL) throws IOException {
+        this(new URL(baseURL));
+    }
 
+    private Class<?> tryToLoadClass(InputStream in) throws IOException {
+        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Utils.copy(in, buffer);
         buffer.flush();
 
         byte buf[] = buffer.toByteArray();
-        return defineClass (buf, 0, buf.length);
+        return defineClass(null, buf, 0, buf.length);
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(final String name) throws ClassNotFoundException {
         try {
             return tryToLoadClass(findResource(name.replace('.', '/') + ".class").openStream());
-        } catch (Exception e) {
-            throw new ClassNotFoundException ();
+        } catch (final Exception e) {
+            throw new ClassNotFoundException(e.getMessage());
         }
     }
 
     @Override
-    public URL findResource(String name) {
-        String resName = local ? name : "?resource=" + name;
+    public URL findResource(final String name) {
+        final String resName = local ? name : "?resource=" + name;
         try {
-            return new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), baseURL.getPath() + "/" + resName);
-        } catch (MalformedURLException e) {
+            return new URL(baseURL.getProtocol(),
+                    baseURL.getHost(),
+                    baseURL.getPort(),
+                    baseURL.getPath() + '/' + resName);
+        } catch (final MalformedURLException e) {
             return null;
         }
     }
 
     @Override
     protected String findLibrary(String libname) {
+        // TODO: nix/mac/solaris?
         File temp = Utils.fetchResourceToTempFile(libname, ".dll", findResource(libname + ".dll"));
         return temp ==  null? null: temp.getAbsolutePath();
+    }
+
+    private String getDescField(String field) {
+        return (String) descriptor.get(field);
+    }
+
+    public URL getFxml() {
+        return getResource(getDescField("fxml"));
+    }
+
+    public URL getSplash() {
+        return getResource(getDescField("splash"));
+    }
+
+    public Class<?> getMain() throws ClassNotFoundException {
+        return loadClass(getDescField("main"));
     }
 }
