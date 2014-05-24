@@ -33,7 +33,7 @@ public class JavaRestartLauncher {
 
     private static File splashLocation;
 
-    public static void fork(String ... args)  {
+    public static void fork(final String ... args)  {
 
         String javaHome = System.getProperty("java.home");
         System.out.println(javaHome);
@@ -43,12 +43,34 @@ public class JavaRestartLauncher {
             if (codeSource.isDirectory()) {
                 splashLocation = new File (codeSource, "defaultSplash.gif");
             } else {
-                splashLocation = Utils.fetchResourceToTempFile("defaultSplash", ".gif", JavaRestartLauncher.class.getClassLoader().getResource("defaultSplash.gif"));
+                splashLocation = Utils.fetchResourceToTempFile("defaultSplash",
+                        ".gif", JavaRestartLauncher.class.getClassLoader().getResource("defaultSplash.gif"));
             }
         }
         String classpath = System.getProperty("java.class.path");
-        String javaLauncher = "\"" + javaHome + "\\bin\\javaw.exe\"" + " -splash:" + splashLocation.getAbsolutePath() + " -Dbinary.css=false -cp \"" + classpath + "\" " + JavaRestartLauncher.class.getName();
-        for (String arg: args) {
+
+        final File javawPath;
+        switch (OS.get()) {
+            case WINDOWS:
+                javawPath = new File(javaHome, "\\bin\\javaw");
+                break;
+            case NIX:
+                javawPath = new File(javaHome,  "/bin/java");
+                break;
+            case MAC:
+                throw new UnsupportedOperationException("mac is not tested yet");
+            default:
+                throw new UnsupportedOperationException();
+        }
+
+        String javaLauncher = javawPath.getAbsolutePath()
+                + " -splash:" + splashLocation.getAbsolutePath()
+                + " -Dbinary.css=false -cp \""
+                + classpath
+                + "\" "
+                + JavaRestartLauncher.class.getName();
+
+        for (final String arg: args) {
             javaLauncher = javaLauncher + " " + arg;
         }
 
