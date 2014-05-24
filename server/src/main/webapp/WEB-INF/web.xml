@@ -13,4 +13,12 @@
 		<servlet-name>mvc-dispatcher</servlet-name>
 		<url-pattern>/apps/*</url-pattern>
 	</servlet-mapping>
+    <filter-mapping>
+        <filter-name>applicationFilter</filter-name>
+        <servlet-name>mvc-dispatcher</servlet-name>
+    </filter-mapping>
+    <filter>
+        <filter-name>applicationFilter</filter-name>
+        <filter-class>javarestart.filters.ApplicationFilter</filter-class>
+    </filter>
 </web-app>

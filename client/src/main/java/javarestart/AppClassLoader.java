@@ -19,10 +19,14 @@ package javarestart;
 
 import org.json.simple.JSONObject;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.*;
 
 /**
  * @author Nikita Lipsky
@@ -77,13 +81,13 @@ public class AppClassLoader extends URLClassLoader {
     }
 
     @Override
-    protected String findLibrary(String libname) {
+    protected String findLibrary(final String libname) {
         // TODO: nix/mac/solaris?
         File temp = Utils.fetchResourceToTempFile(libname, ".dll", findResource(libname + ".dll"));
         return temp ==  null? null: temp.getAbsolutePath();
     }
 
-    private String getDescField(String field) {
+    private String getDescField(final String field) {
         return (String) descriptor.get(field);
     }
 
@@ -97,5 +101,54 @@ public class AppClassLoader extends URLClassLoader {
 
     public Class<?> getMain() throws ClassNotFoundException {
         return loadClass(getDescField("main"));
+    }
+
+    public ResourceBundle getResourceBundle(final Locale locale) {
+        final String file = getDescField("fxml");
+        final int indexOfExtension = file.indexOf('.');
+        if (indexOfExtension != 1) {
+            final String extension = file.substring(file.lastIndexOf('.') + 1);
+            if (!"fxml".equals(extension)) {
+                throw new IllegalArgumentException(
+                        "This component only loads FXML " +
+                        "pages. Point the URL property to an FXML file"
+                );
+            }
+            final String resourceName = file.substring(0, indexOfExtension);
+
+            ResourceBundle found = null;
+
+            final Iterable<String> bundleNames = constructBundleFileNames(locale, resourceName);
+
+            for (final String bundleName : bundleNames) {
+                final URL urlBundle = findResource(bundleName);
+                if (urlBundle == null) {
+                    continue;
+                }
+
+                try (InputStream bundleIS = urlBundle.openStream()) {
+                    found = new PropertyResourceBundle(bundleIS);
+                    break;
+                } catch (final IOException ex) {
+                }
+            }
+
+            return found;
+        }
+
+        return null;
+    }
+
+    private Iterable<String> constructBundleFileNames(final Locale locale,
+                                                      final String appName) {
+
+        final List<String> names = new ArrayList<>(3);
+        final String l0 = new Locale(locale.getLanguage(), locale.getCountry()).toString();
+        final String l1 = new Locale(locale.getLanguage()).toString();
+        names.add(appName + '_' + l0 + ".properties");
+        names.add(appName + '_' + l1 + ".properties");
+        names.add(appName + ".properties");
+
+        return Collections.unmodifiableList(names);
     }
 }
