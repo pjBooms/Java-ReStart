@@ -19,8 +19,14 @@ public class ApplicationFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(final ServletRequest request,
+                         final ServletResponse response,
+                         final FilterChain chain) throws IOException, ServletException {
         final String pathTranslated = ((HttpServletRequest) request).getPathInfo();
+
+        System.err.println("~~> " + pathTranslated);
+        System.err.println("~~> " + ((HttpServletRequest) request).getContextPath());
+
         if (!pathTranslated.endsWith("/")) {
             final String[] split = SLASH.split(pathTranslated);
             if (split.length > 2) {
@@ -33,7 +39,7 @@ public class ApplicationFilter implements Filter {
                     stringBuilder.setLength(stringBuilder.length() - 1);
                 }
 
-                final String rewritten = "?resource=" + stringBuilder;
+                final String rewritten = "/apps/" + split[1] + "/?resource=" + stringBuilder;
                 ((HttpServletResponse) response).sendRedirect(rewritten);
                 return;
             }
