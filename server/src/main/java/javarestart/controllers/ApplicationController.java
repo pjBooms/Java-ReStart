@@ -82,8 +82,8 @@ public class ApplicationController {
         return resourceProvider.getAppDescriptor();
     }
 
-	@RequestMapping(value = "/{applicationName}", params ={"resource"} ,method = RequestMethod.GET)
-	public void loadResource(@RequestParam(value = "resource") String resourceName, @PathVariable("applicationName") String applicationName, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/{applicationName}", params ={"resource"} ,method = RequestMethod.GET)
+    public void loadResource(@RequestParam(value = "resource") String resourceName, @PathVariable("applicationName") String applicationName, HttpServletResponse response) throws Exception {
         AppResourceProvider resourceProvider = getOrRegisterApp(applicationName);
         URLConnection resource = null;
         try {
@@ -97,6 +97,6 @@ public class ApplicationController {
             logger.warning(e.toString());
             response.sendError(404);
         }
-	}
+    }
 
 }
