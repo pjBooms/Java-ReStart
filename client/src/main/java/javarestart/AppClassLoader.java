@@ -103,7 +103,10 @@ public class AppClassLoader extends URLClassLoader {
         return loadClass(getDescField("main"));
     }
 
-    public ResourceBundle getResourceBundle(final Locale locale) {
+    public ResourceBundle getResourceBundle(Locale locale) {
+        if (locale ==  null) {
+            locale = Locale.getDefault();
+        }
         final String file = getDescField("fxml");
         final int indexOfExtension = file.indexOf('.');
         if (indexOfExtension != 1) {
