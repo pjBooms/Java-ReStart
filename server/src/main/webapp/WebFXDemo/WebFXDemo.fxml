@@ -46,7 +46,7 @@
   </children>
 
     <fx:script>
-        var $webfx = {title: "JavaRestartDemo"};
+        var $webfx = {title: "WebFX demo"};
 
         function handleButtonAction(event) {
              $webfx.navigation.goTo("../apps/" + event.getSource().getId());
