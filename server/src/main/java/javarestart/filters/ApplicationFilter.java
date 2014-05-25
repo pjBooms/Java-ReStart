@@ -23,10 +23,6 @@ public class ApplicationFilter implements Filter {
                          final ServletResponse response,
                          final FilterChain chain) throws IOException, ServletException {
         final String pathTranslated = ((HttpServletRequest) request).getPathInfo();
-
-        System.err.println("~~> " + pathTranslated);
-        System.err.println("~~> " + ((HttpServletRequest) request).getContextPath());
-
         if (!pathTranslated.endsWith("/")) {
             final String[] split = SLASH.split(pathTranslated);
             if (split.length > 2) {
