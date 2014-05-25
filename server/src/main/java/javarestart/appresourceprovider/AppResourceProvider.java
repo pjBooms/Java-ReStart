@@ -19,10 +19,15 @@ package javarestart.appresourceprovider;
 
 import javarestart.dto.AppDescriptorDto;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -37,30 +42,33 @@ public class AppResourceProvider {
     private final AppDescriptorDto appDescriptor;
 
     public AppResourceProvider(String appPath, String projectName) throws Exception {
-        Properties appProps = new Properties();
-        File baseDir = new File(appPath, projectName);
+        final Properties appProps = new Properties();
+        final File baseDir = new File(appPath, projectName);
         appProps.load(new BufferedInputStream(new FileInputStream(new File(baseDir, APP_PROPERTIES))));
         appDescriptor = new AppDescriptorDto();
         appDescriptor.setMain(appProps.getProperty("main"));
         appDescriptor.setSplash(appProps.getProperty("splash"));
         appDescriptor.setFxml(appProps.getProperty("fxml"));
-        String classPath[] = SEMICOLON.split(appProps.getProperty("classpath"));
-        URL[] urls = new URL[classPath.length];
-        for (int i = 0; i < classPath.length; i++) {
-            urls[i] = new File(baseDir, classPath[i]).toURI().toURL();
+        final String[] classPath = SEMICOLON.split(appProps.getProperty("classpath"));
+        final List<URL> urls = new ArrayList<>(classPath.length);
+        for (final String path : classPath) {
+            final String classPathElement = path.trim();
+            if (!classPathElement.isEmpty()) {
+                urls.add(new File(baseDir, classPathElement).toURI().toURL());
+            }
         }
-        loader = new URLClassLoader(urls);
+        loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
     }
 
     public URLConnection load(final String resourceName) throws ResourceNotFoundException {
         try {
-            URL result = loader.findResource(resourceName);
+            final URL result = loader.findResource(resourceName);
             if (result == null) {
-                throw new ResourceNotFoundException("Requested resource not found: "+ resourceName);
+                throw new ResourceNotFoundException("Requested resource not found: " + resourceName);
             }
             return result.openConnection();
-        } catch (IOException e) {
-            throw new ResourceNotFoundException("Requested resource not found: "+ resourceName, e);
+        } catch (final IOException e) {
+            throw new ResourceNotFoundException("Requested resource not found: " + resourceName, e);
         }
     }
 
