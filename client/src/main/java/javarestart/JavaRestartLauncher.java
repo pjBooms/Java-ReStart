@@ -21,13 +21,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class JavaRestartLauncher {
 
@@ -49,39 +47,56 @@ public class JavaRestartLauncher {
         }
         String classpath = System.getProperty("java.class.path");
 
-        final File javawPath;
+        final File javaLauncherPath;
         switch (OS.get()) {
             case WINDOWS:
-                javawPath = new File(javaHome, "\\bin\\javaw");
+                javaLauncherPath = new File(javaHome, "\\bin\\javaw");
                 break;
-            case NIX:
-                javawPath = new File(javaHome,  "/bin/java");
+            case NIX: case MAC:
+                javaLauncherPath = new File(javaHome,  "/bin/java");
                 break;
-            case MAC:
-                throw new UnsupportedOperationException("mac is not tested yet");
             default:
                 throw new UnsupportedOperationException();
         }
 
-        String javaLauncher = javawPath.getAbsolutePath()
-                + " -splash:" + splashLocation.getAbsolutePath()
-                + " -Dbinary.css=false -cp \""
-                + classpath
-                + "\" "
-                + JavaRestartLauncher.class.getName();
+        ArrayList<String> cmdArgs = new ArrayList<>();
+        cmdArgs.add(javaLauncherPath.getAbsolutePath());
+        cmdArgs.add("-splash:" + splashLocation.getAbsolutePath());
+        cmdArgs.add("-Dbinary.css=false");
+        cmdArgs.add("-cp");
+        cmdArgs.add("\"" + classpath + "\"");
+        cmdArgs.add(JavaRestartLauncher.class.getName());
 
         for (final String arg: args) {
-            javaLauncher = javaLauncher + " " + arg;
+            cmdArgs.add(arg);
         }
 
-        System.out.println(javaLauncher);
-
-        final String finalJavaLauncher = javaLauncher;
+        final String[] cmd = cmdArgs.toArray(new String[cmdArgs.size()]);
         (new Thread(){
             @Override
             public void run() {
                 try {
-                    Runtime.getRuntime().exec(finalJavaLauncher).waitFor();
+                    Process p = Runtime.getRuntime().exec(cmd);
+//                    BufferedReader stdInput = new BufferedReader(new
+//                            InputStreamReader(p.getInputStream()));
+//
+//                    BufferedReader stdError = new BufferedReader(new
+//                            InputStreamReader(p.getErrorStream()));
+//
+//                    // read the output from the command
+//                    System.out.println("Here is the standard output of the command:\n");
+//                    String s;
+//                    while ((s = stdInput.readLine()) != null) {
+//                        System.out.println(s);
+//                    }
+//
+//                    // read any errors from the attempted command
+//                    System.out.println("Here is the standard error of the command (if any):\n");
+//                    while ((s = stdError.readLine()) != null) {
+//                        System.out.println(s);
+//                    }
+                    p.waitFor();
+//                    System.out.println(p.exitValue());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
