@@ -64,7 +64,7 @@ public class JavaRestartLauncher {
         cmdArgs.add("-splash:" + splashLocation.getAbsolutePath());
         cmdArgs.add("-Dbinary.css=false");
         cmdArgs.add("-cp");
-        cmdArgs.add("\"" + classpath + "\"");
+        cmdArgs.add(classpath);
         cmdArgs.add(JavaRestartLauncher.class.getName());
 
         for (final String arg: args) {
@@ -77,26 +77,7 @@ public class JavaRestartLauncher {
             public void run() {
                 try {
                     Process p = Runtime.getRuntime().exec(cmd);
-//                    BufferedReader stdInput = new BufferedReader(new
-//                            InputStreamReader(p.getInputStream()));
-//
-//                    BufferedReader stdError = new BufferedReader(new
-//                            InputStreamReader(p.getErrorStream()));
-//
-//                    // read the output from the command
-//                    System.out.println("Here is the standard output of the command:\n");
-//                    String s;
-//                    while ((s = stdInput.readLine()) != null) {
-//                        System.out.println(s);
-//                    }
-//
-//                    // read any errors from the attempted command
-//                    System.out.println("Here is the standard error of the command (if any):\n");
-//                    while ((s = stdError.readLine()) != null) {
-//                        System.out.println(s);
-//                    }
                     p.waitFor();
-//                    System.out.println(p.exitValue());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
