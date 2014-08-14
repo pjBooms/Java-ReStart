@@ -18,14 +18,20 @@
 package javarestart;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public final class JavaRestartLauncher {
+    
     private JavaRestartLauncher() {
     }
 
@@ -48,45 +54,64 @@ public final class JavaRestartLauncher {
 
         String classpath = System.getProperty("java.class.path");
 
-        final File javawPath;
+        final File javaLauncherPath;
         switch (OS.get()) {
             case WINDOWS:
-                javawPath = new File(javaHome, "\\bin\\javaw");
+                javaLauncherPath = new File(javaHome, "\\bin\\javaw");
                 break;
-            case NIX:
-                javawPath = new File(javaHome,  "/bin/java");
+            case NIX: case MAC:
+                javaLauncherPath = new File(javaHome,  "/bin/java");
                 break;
-            case MAC:
-                throw new UnsupportedOperationException("mac is not tested yet");
             default:
                 throw new UnsupportedOperationException();
         }
 
-        String javaLauncher = javawPath.getAbsolutePath()
-                + " -splash:" + splashLocation.getAbsolutePath()
-                + " -Dbinary.css=false -cp \""
-                + classpath
-                + "\" "
-                + JavaRestartLauncher.class.getName();
+        ArrayList<String> cmdArgs = new ArrayList<>();
+        cmdArgs.add(javaLauncherPath.getAbsolutePath());
+        cmdArgs.add("-splash:" + splashLocation.getAbsolutePath());
+        cmdArgs.add("-Dbinary.css=false");
+        cmdArgs.add("-cp");
+        cmdArgs.add(classpath);
+        cmdArgs.add(JavaRestartLauncher.class.getName());
 
         for (final String arg: args) {
-            javaLauncher = javaLauncher + ' ' + arg;
+            cmdArgs.add(arg);
         }
 
-        System.out.println(javaLauncher);
-
-        final String finalJavaLauncher = javaLauncher;
-
-        new Thread(new Runnable() {
+        final String[] cmd = cmdArgs.toArray(new String[cmdArgs.size()]);
+        (new Thread(){
             @Override
             public void run() {
                 try {
-                    Runtime.getRuntime().exec(finalJavaLauncher).waitFor();
-                } catch (final InterruptedException | IOException e) {
+                    Process p = Runtime.getRuntime().exec(cmd);
+                    p.waitFor();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+    }
+
+    public static String getText(String url) throws IOException {
+        URL website = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) website.openConnection();
+        try (LineNumberReader in = new LineNumberReader(
+                    new InputStreamReader(
+                            connection.getInputStream())))
+        {
+            StringBuilder response = new StringBuilder();
+            String inputLine;
+            while ((inputLine = in.readLine()) != null)
+                response.append(inputLine);
+
+            return response.toString();
+        }
+    }
+
+    public static JSONObject getJSON(String url) throws IOException {
+        return (JSONObject) JSONValue.parse(getText(url));
     }
 
     public static void main(String[] args) throws Exception {
