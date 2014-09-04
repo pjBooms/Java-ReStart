@@ -18,15 +18,11 @@
 package javarestart;
 
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -92,26 +88,6 @@ public final class JavaRestartLauncher {
                 }
             }
         }).start();
-    }
-
-    public static String getText(String url) throws IOException {
-        URL website = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) website.openConnection();
-        try (LineNumberReader in = new LineNumberReader(
-                    new InputStreamReader(
-                            connection.getInputStream())))
-        {
-            StringBuilder response = new StringBuilder();
-            String inputLine;
-            while ((inputLine = in.readLine()) != null)
-                response.append(inputLine);
-
-            return response.toString();
-        }
-    }
-
-    public static JSONObject getJSON(String url) throws IOException {
-        return (JSONObject) JSONValue.parse(getText(url));
     }
 
     public static void main(String[] args) throws Exception {

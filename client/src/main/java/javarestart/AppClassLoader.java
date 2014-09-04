@@ -142,6 +142,10 @@ public class AppClassLoader extends URLClassLoader {
         return null;
     }
 
+    public URL getBaseURL() {
+        return baseURL;
+    }
+
     private Iterable<String> constructBundleFileNames(final Locale locale,
                                                       final String appName) {
 
