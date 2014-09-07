@@ -42,7 +42,7 @@ public class AppClassLoader extends URLClassLoader {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
         this.baseURL = baseURL;
         this.local = this.baseURL.getProtocol().equals("file");
-        this.descriptor = AppUtils.getJSON(baseURL);
+        this.descriptor = Utils.getJSON(baseURL);
     }
 
     public AppClassLoader(String baseURL) throws IOException {

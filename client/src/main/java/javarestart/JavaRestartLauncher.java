@@ -108,7 +108,7 @@ public final class JavaRestartLauncher {
         AppClassLoader loader = new AppClassLoader(args[0]);
         Thread.currentThread().setContextClassLoader(loader);
         String main;
-        JSONObject obj = AppUtils.getJSON(args[0]);
+        JSONObject obj = Utils.getJSON(args[0]);
         if (args.length < 2) {
             main = (String) obj.get("main");
         } else {

@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * @author Nikita Lipsky
  */
 public class AppResourceProvider {
-    private static final Pattern SEMICOLON = Pattern.compile(";");
+    private static final Pattern PATH_SEP = Pattern.compile(";");
     private static final String APP_PROPERTIES = "app.properties";
 
     private final URLClassLoader loader;
@@ -49,7 +49,7 @@ public class AppResourceProvider {
         appDescriptor.setMain(appProps.getProperty("main"));
         appDescriptor.setSplash(appProps.getProperty("splash"));
         appDescriptor.setFxml(appProps.getProperty("fxml"));
-        final String[] classPath = SEMICOLON.split(appProps.getProperty("classpath"));
+        final String[] classPath = PATH_SEP.split(appProps.getProperty("classpath"));
         final List<URL> urls = new ArrayList<>(classPath.length);
         for (final String path : classPath) {
             final String classPathElement = path.trim();
