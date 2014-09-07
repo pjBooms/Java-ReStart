@@ -20,7 +20,7 @@ The server has a very simple REST interface now:
 
 ```
 GET /{application} -- returns an application descriptor in JSON format (main class name of the application (entry point), splash, etc.)
-GET /{application}?resource={resource} -- returns a class/resource of a referenced application
+GET /{application}/{resource} -- returns a class/resource of a referenced application
 ```
 
 The client in turn has a very simple command line interface:
