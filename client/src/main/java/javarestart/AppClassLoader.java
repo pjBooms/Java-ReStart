@@ -35,13 +35,11 @@ public class AppClassLoader extends URLClassLoader {
 
     private URL baseURL;
 
-    private boolean local;
     private final JSONObject descriptor;
 
     public AppClassLoader(final URL baseURL) throws IOException {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
         this.baseURL = baseURL;
-        this.local = this.baseURL.getProtocol().equals("file");
         this.descriptor = Utils.getJSON(baseURL);
     }
 
@@ -69,12 +67,11 @@ public class AppClassLoader extends URLClassLoader {
 
     @Override
     public URL findResource(final String name) {
-        final String resName = local ? name : "?resource=" + name;
         try {
             return new URL(baseURL.getProtocol(),
                     baseURL.getHost(),
                     baseURL.getPort(),
-                    baseURL.getPath() + '/' + resName);
+                    baseURL.getPath() + '/' + name);
         } catch (final MalformedURLException e) {
             return null;
         }
@@ -103,59 +100,7 @@ public class AppClassLoader extends URLClassLoader {
         return loadClass(getDescField("main"));
     }
 
-    public ResourceBundle getResourceBundle(Locale locale) {
-        if (locale ==  null) {
-            locale = Locale.getDefault();
-        }
-        final String file = getDescField("fxml");
-        final int indexOfExtension = file.indexOf('.');
-        if (indexOfExtension != 1) {
-            final String extension = file.substring(file.lastIndexOf('.') + 1);
-            if (!"fxml".equals(extension)) {
-                throw new IllegalArgumentException(
-                        "This component only loads FXML " +
-                        "pages. Point the URL property to an FXML file"
-                );
-            }
-            final String resourceName = file.substring(0, indexOfExtension);
-
-            ResourceBundle found = null;
-
-            final Iterable<String> bundleNames = constructBundleFileNames(locale, resourceName);
-
-            for (final String bundleName : bundleNames) {
-                final URL urlBundle = findResource(bundleName);
-                if (urlBundle == null) {
-                    continue;
-                }
-
-                try (InputStream bundleIS = urlBundle.openStream()) {
-                    found = new PropertyResourceBundle(bundleIS);
-                    break;
-                } catch (final IOException ex) {
-                }
-            }
-
-            return found;
-        }
-
-        return null;
-    }
-
     public URL getBaseURL() {
         return baseURL;
-    }
-
-    private Iterable<String> constructBundleFileNames(final Locale locale,
-                                                      final String appName) {
-
-        final List<String> names = new ArrayList<>(3);
-        final String l0 = new Locale(locale.getLanguage(), locale.getCountry()).toString();
-        final String l1 = new Locale(locale.getLanguage()).toString();
-        names.add(appName + '_' + l0 + ".properties");
-        names.add(appName + '_' + l1 + ".properties");
-        names.add(appName + ".properties");
-
-        return Collections.unmodifiableList(names);
     }
 }
