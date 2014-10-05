@@ -26,24 +26,23 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
 
 /**
  * @author Nikita Lipsky
  */
-public class AppClassLoader extends URLClassLoader {
+public class WebClassLoader extends URLClassLoader {
 
     private URL baseURL;
 
     private final JSONObject descriptor;
 
-    public AppClassLoader(final URL baseURL) throws IOException {
+    public WebClassLoader(final URL baseURL) throws IOException {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
         this.baseURL = baseURL;
         this.descriptor = Utils.getJSON(baseURL);
     }
 
-    public AppClassLoader(String baseURL) throws IOException {
+    public WebClassLoader(String baseURL) throws IOException {
         this(new URL(baseURL));
     }
 
