@@ -4,21 +4,21 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 
     <servlet>
-		<servlet-name>mvc-dispatcher</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>mvc-dispatcher</servlet-name>
-		<url-pattern>/apps/*</url-pattern>
-	</servlet-mapping>
-    <filter-mapping>
-        <filter-name>applicationFilter</filter-name>
         <servlet-name>mvc-dispatcher</servlet-name>
-    </filter-mapping>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mvc-dispatcher</servlet-name>
+        <url-pattern>/apps/*</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>applicationFilter</filter-name>
         <filter-class>javarestart.filters.AppResourceFilter</filter-class>
     </filter>
+    <filter-mapping>
+        <filter-name>applicationFilter</filter-name>
+        <servlet-name>mvc-dispatcher</servlet-name>
+    </filter-mapping>
 </web-app>

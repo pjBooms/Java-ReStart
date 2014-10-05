@@ -68,9 +68,8 @@ You can also run the samples from forked version of Bruno Borges WebFX browser
 point the browser to http://localhost:8080 and click "Java Restart Demo" link.
 
 Run Notes:
-Ensemble demo does not work with Java 8 now and with Java 7 it does not load all resources that are referenced by the demo (f.i. it does not load "close" button icon).
+Ensemble demo does not work with Java 8 now and with Java 7 it does not load all resources that are referenced by the demo.
 SWT, Jenesis can run only with 32-bit JRE on Windows (they are using 32-bit native libraries).
-JavaRestartDemo is forking JVM to run demos and the way it forks JVM can work on Windows only.
 
 Java ReStart on Jelastic
 =====
@@ -98,6 +97,32 @@ After that you may launch it with the client:
 ```
 java javarestart.JavaRestartLauncher <BaseURL>/<AppName>
 ```
+
+Java ReStart and WebFX
+=====
+Java ReStart is integrated now with WebFX (https://github.com/pjBooms/webfx).
+
+It means that:
+
+1. You may launch Java ReStart applications from WebFX browser via java://`<BaseURL>` protocol.
+   You may try this via cope&paste to WebFX browser the following URL: java://javarestart.jelasticloud.com/apps/Java2Demo
+
+2. Additionally Java ReStart app descriptor is extended to provide a main FXML of a WebFX application (instead of a main class). 
+   This way, when you reference your application as wfx://`<BaseURL>` from WebFX browser, the main FXML page is loaded in a new tab of the WebFX browser
+   (not as separate window as with java:// protocol). 
+   And you may reference Java ReStart classes (classes that are located on Java ReStart server) from your FXML! 
+
+   Check out this URL in the WebFX browser: 
+   
+   wfx://javarestart.jelasticloud.com/apps/Game2048 
+
+   (tip: use WASD instead of arrows to play).
+   
+   The demo is written in pure Java and behind the scence Java bytecode of the game is loaded that is referenced from the very simple main FXML page.
+   This Java ReStart <-> WebFX integration allows you to write applications the same way as web applications but use FXML instead of HTML 
+   and any programming language that is available on top of Java platform from Java, Scala to JavaScript, JRuby, etc., and without compromising performance or 
+   to-JS-translated-that-I-do-not-know-how-to-work-and-why-it-does-not-work-when-it-does-not-work issues.
+   
 TODO
 =====
 1. Implement caching of downloaded classes by the client 
