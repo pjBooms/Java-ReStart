@@ -19,6 +19,7 @@ package javarestart;
 
 import org.json.simple.JSONObject;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -90,6 +91,19 @@ public final class JavaRestartLauncher {
         }).start();
     }
 
+    private static void closeSplash() {
+        SwingUtilities.invokeLater(
+                new Runnable() {
+                    public void run() {
+                        SplashScreen scr = SplashScreen.getSplashScreen();
+                        if ((scr != null) && (scr.isVisible())) {
+                            scr.close();
+                        }
+                    }
+                }
+        );
+    }
+
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             System.out.println("Usage: <URL> {<MainClass>}");
@@ -98,9 +112,7 @@ public final class JavaRestartLauncher {
 
         if ("fork".equals(args[0])) {
             String[] args2 = new String[args.length - 1];
-            for (int i = 0; i < args.length -1; i++) {
-                args2[i] = args[i + 1];
-            }
+            System.arraycopy(args, 1, args2, 0, args.length - 1);
             fork(args2);
             return;
         }
@@ -124,6 +136,19 @@ public final class JavaRestartLauncher {
             }
         }
 
+        String splashCloseOnProp = (String) obj.get("splashCloseOn");
+        if (splashCloseOnProp != null) {
+            final String splashCloseOn = splashCloseOnProp.replace('.', '/');
+            loader.addListener(new ClassLoaderListener() {
+                @Override
+                public void classLoaded(String classname) {
+                    if (classname.replace('.', '/').equals(splashCloseOn)) {
+                        closeSplash();
+                    }
+                }
+            });
+        }
+
         //auto close splash after 45 seconds
         Thread splashClose = new Thread(){
             @Override
@@ -132,13 +157,11 @@ public final class JavaRestartLauncher {
                     sleep(45000);
                 } catch (InterruptedException e) {
                 }
-                SplashScreen scr = SplashScreen.getSplashScreen();
-                if ((scr!=null) && (scr.isVisible())) {
-                    scr.close();
-                }
+                closeSplash();
             }
         };
         splashClose.setDaemon(true);
+        splashClose.setPriority(Thread.MIN_PRIORITY);
         splashClose.start();
 
         Class mainClass = loader.loadClass(main);

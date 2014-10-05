@@ -48,6 +48,7 @@ public class AppResourceProvider {
         appDescriptor = new AppDescriptorDto();
         appDescriptor.setMain(appProps.getProperty("main"));
         appDescriptor.setSplash(appProps.getProperty("splash"));
+        appDescriptor.setSplashCloseOn(appProps.getProperty("splashCloseOn"));
         appDescriptor.setFxml(appProps.getProperty("fxml"));
         final String[] classPath = PATH_SEP.split(appProps.getProperty("classpath"));
         final List<URL> urls = new ArrayList<>(classPath.length);

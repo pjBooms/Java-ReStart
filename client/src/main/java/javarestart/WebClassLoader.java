@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Nikita Lipsky
@@ -36,6 +38,8 @@ public class WebClassLoader extends URLClassLoader {
 
     private final JSONObject descriptor;
 
+    private List<ClassLoaderListener> listeners;
+
     public WebClassLoader(final URL baseURL) throws IOException {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
         this.baseURL = baseURL;
@@ -44,6 +48,20 @@ public class WebClassLoader extends URLClassLoader {
 
     public WebClassLoader(String baseURL) throws IOException {
         this(new URL(baseURL));
+    }
+
+    public void addListener(ClassLoaderListener listener) {
+        if (listeners == null) {
+            listeners = new LinkedList<>();
+        }
+        listeners.add(listener);
+    }
+
+    private void fireClassLoaded(String classname) {
+        if (listeners == null) return;
+        for (ClassLoaderListener l: listeners) {
+            l.classLoaded(classname);
+        }
     }
 
     private Class<?> tryToLoadClass(InputStream in) throws IOException {
@@ -58,7 +76,9 @@ public class WebClassLoader extends URLClassLoader {
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         try {
-            return tryToLoadClass(findResource(name.replace('.', '/') + ".class").openStream());
+            Class c = tryToLoadClass(findResource(name.replace('.', '/') + ".class").openStream());
+            fireClassLoaded(name);
+            return c;
         } catch (final Exception e) {
             throw new ClassNotFoundException(e.getMessage());
         }
