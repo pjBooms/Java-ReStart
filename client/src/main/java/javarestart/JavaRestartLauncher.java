@@ -21,8 +21,10 @@ import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -81,8 +83,51 @@ public final class JavaRestartLauncher {
             @Override
             public void run() {
                 try {
-                    Process p = Runtime.getRuntime().exec(cmd);
+                    final Process p = Runtime.getRuntime().exec(cmd);
+                    Thread stdOutReader = new Thread() {
+                        @Override
+                        public void run() {
+                            // read the output from the command
+                            System.out.println("Here is the standard output of the command:\n");
+
+                            BufferedReader stdInput = new BufferedReader(new
+                                    InputStreamReader(p.getInputStream()));
+                            String s;
+                            try {
+                                while ((s = stdInput.readLine()) != null) {
+                                    System.out.println(s);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+
+                    Thread stdErrReader = new Thread(){
+                        @Override
+                        public void run() {
+                            BufferedReader stdError = new BufferedReader(new
+                                    InputStreamReader(p.getErrorStream()));
+                            // read any errors from the attempted command
+                            System.out.println("Here is the standard error of the command (if any):\n");
+                            String s;
+                            try {
+                                while ((s = stdError.readLine()) != null) {
+                                    System.out.println(s);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    };
+
+                    stdOutReader.start();
+                    stdErrReader.start();
+
                     p.waitFor();
+                    stdOutReader.join();
+                    stdErrReader.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -120,6 +165,7 @@ public final class JavaRestartLauncher {
 
         final WebClassLoader loader = new WebClassLoader(args[0]);
         Thread.currentThread().setContextClassLoader(loader);
+        loader.preLoadInitial();
         String main;
         final JSONObject obj = Utils.getJSON(args[0]);
         if (args.length < 2) {

@@ -19,16 +19,11 @@ package javarestart.appresourceprovider;
 
 import javarestart.dto.AppDescriptorDto;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -39,6 +34,8 @@ public class AppResourceProvider {
     private static final String APP_PROPERTIES = "app.properties";
     private final URLClassLoader loader;
     private final AppDescriptorDto appDescriptor;
+
+    private final TreeMap<String, URL> loaded = new TreeMap<>();
 
     //TODO: move to properties
     private final String APPS_BASE_PATH = "/apps";
@@ -70,10 +67,17 @@ public class AppResourceProvider {
             if (result == null) {
                 throw new ResourceNotFoundException("Requested resource not found: " + resourceName);
             }
+            if (!loaded.containsKey(resourceName)) {
+                loaded.put(resourceName, result);
+            }
             return result.openConnection();
         } catch (final IOException e) {
             throw new ResourceNotFoundException("Requested resource not found: " + resourceName, e);
         }
+    }
+
+    public Map<String, URL> getInitialBundle() {
+        return loaded;
     }
 
     public AppDescriptorDto getAppDescriptor() {

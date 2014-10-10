@@ -26,8 +26,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 /**
@@ -98,5 +104,43 @@ public class ApplicationController {
             response.sendError(404);
         }
     }
+
+    private static final String CRLF = "\r\n";
+
+    @RequestMapping(value = "/{applicationName}", params = {"bundle"}, method = RequestMethod.GET)
+    public void loadBundle(@RequestParam(value = "bundle") String bundleName, @PathVariable("applicationName") String applicationName, HttpServletResponse response) throws Exception {
+        AppResourceProvider resourceProvider = getOrRegisterApp(applicationName);
+        if (resourceProvider == null) {
+            response.sendError(404);
+            return;
+        }
+        response.setHeader("Transfer-Encoding", "chunked");
+        try (
+            OutputStream output = response.getOutputStream();
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(output), true)
+        ) {
+            for (Entry<String, URL> entry: resourceProvider.getInitialBundle().entrySet()){
+                    String resName = entry.getKey();
+                    writer.print(Integer.toHexString(resName.length()));
+                    writer.print(CRLF);
+                    writer.print(resName);
+                    writer.print(CRLF);
+                    URLConnection conn = entry.getValue().openConnection();
+                    conn.connect();
+                    writer.print(Integer.toHexString(conn.getContentLength()));
+                    writer.print(CRLF);
+                    writer.flush();
+                    IOUtils.copy(conn.getInputStream(), output);
+                    output.flush();
+                    writer.print(CRLF);
+            }
+           writer.print("0");
+           writer.print(CRLF);
+        } catch (IOException e) {
+            logger.warning(e.toString());
+        }
+        response.flushBuffer();
+    }
+
 
 }

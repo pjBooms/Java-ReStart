@@ -27,7 +27,7 @@ import java.nio.charset.Charset;
 
 public class Utils {
 
-    static File fetchResourceToTempFile(String resName, String resExt, URL from) {
+    static File fetchResourceToTempFile(String resName, String resExt, InputStream from) {
         File temp;
         try {
             temp = File.createTempFile(resName, resExt);
@@ -37,12 +37,21 @@ public class Utils {
         temp.deleteOnExit();
         try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(temp)))
         {
-            copy(from.openStream(), os);
+            copy(from, os);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
         return temp;
+    }
+
+    static File fetchResourceToTempFile(String resName, String resExt, URL from) {
+        try {
+            return fetchResourceToTempFile(resName, resExt, from.openStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     static void copy(InputStream in, OutputStream out) throws IOException {
@@ -51,6 +60,38 @@ public class Utils {
 
         while ((nRead = in.read(data, 0, data.length)) != -1) {
             out.write(data, 0, nRead);
+        }
+    }
+
+    static void copy(InputStream in, OutputStream out, int length) throws IOException {
+        int nRead;
+        byte[] data = new byte[16384];
+
+        while ((nRead = in.read(data, 0, Math.min(length, data.length))) != -1) {
+            out.write(data, 0, nRead);
+            length -= nRead;
+            if (length == 0) {
+                return;
+            }
+        }
+    }
+
+    public static String readAsciiLine(InputStream in) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        boolean prevCR = false;
+        while (true) {
+            int b = in.read();
+            if (b == -1) {
+                return sb.toString();
+            }
+            if (b == 0xD) {
+                prevCR = true;
+            } else if ((b == 0xA) && prevCR) {
+                return sb.toString();
+            } else {
+                sb.append((char)b);
+                prevCR = false;
+            }
         }
     }
 
@@ -76,6 +117,5 @@ public class Utils {
             return response.toString();
         }
     }
-
 
 }
