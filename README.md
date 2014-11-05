@@ -73,19 +73,19 @@ SWT, Jenesis can run only with 32-bit JRE on Windows (they are using 32-bit nati
 
 Java ReStart on Jelastic
 =====
-The Java ReStart server with the sample applications is deployed now on Jelastic Cloud:
+The Java ReStart server with the sample applications is deployed now on Jelastic:
 
-http://javarestart.jelasticloud.com/
+http://javarestart.com/
 
 So you may run the samples above now with just Java ReStart client (no need to deploy on local server):
 
 ```
-java javarestart.JavaRestartLauncher http://javarestart.jelasticloud.com/apps/<AppName> 
+java javarestart.JavaRestartLauncher http://javarestart.com/apps/<AppName>
 ```
 
 Or via my fork of WebFX browser:
 
-point the browser to http://javarestart.jelasticloud.com and click "Java Restart Demo" link.
+point the browser to http://javarestart.com and click "Java Restart Demo" link.
 
 
 Adding your own applications
@@ -105,7 +105,7 @@ Java ReStart is integrated now with WebFX (https://github.com/pjBooms/webfx).
 It means that:
 
 1. You may launch Java ReStart applications from WebFX browser via java://`<BaseURL>` protocol.
-   You may try this via cope&paste to WebFX browser the following URL: java://javarestart.jelasticloud.com/apps/Java2Demo
+   You may try this via cope&paste to WebFX browser the following URL: java://javarestart.com/apps/Java2Demo
 
 2. Additionally Java ReStart app descriptor is extended to provide a main FXML of a WebFX application (instead of a main class). 
    This way, when you reference your application as wfx://`<BaseURL>` from WebFX browser, the main FXML page is loaded in a new tab of the WebFX browser
@@ -114,7 +114,7 @@ It means that:
 
    Check out this URL in the WebFX browser: 
    
-   wfx://javarestart.jelasticloud.com/apps/Game2048 
+   wfx://javarestart.com/apps/Game2048
 
    (tip: use WASD instead of arrows to play).
    
