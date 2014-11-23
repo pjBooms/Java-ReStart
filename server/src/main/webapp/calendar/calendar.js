@@ -1,1 +1,0 @@
-$webfx = {title: 'Calendar (JFXtras)'};

@@ -18,20 +18,18 @@
         <Text text="%welcome" id="welcome-text" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
         <Label text="%username" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <TextField  fx:id="usernameField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-        <Label text="%password" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
         <HBox spacing="10" alignment="bottom_right" GridPane.columnIndex="1" GridPane.rowIndex="4">
             <children>
-                <Button text="%signIn" onAction="doLogin()"/>
+                <Button text="%doGreeting" onAction="doHello()"/>
             </children>
         </HBox>
-        <Text fx:id="actiontarget"  GridPane.columnSpan="2" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.halignment="RIGHT" />
+        <Text fx:id="greetingField"  GridPane.columnSpan="2" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.halignment="RIGHT" />
     </children>
     
     <stylesheets>
-        <URL value="@login.css"/>
+        <URL value="@helloworld.css"/>
     </stylesheets>
 
-    <fx:script source="login.js"/>
+    <fx:script source="helloworld.js"/>
 
 </GridPane>
