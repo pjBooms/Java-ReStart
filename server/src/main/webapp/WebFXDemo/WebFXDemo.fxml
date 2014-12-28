@@ -49,7 +49,7 @@
         var $webfx = {title: "WebFX demo"};
 
         function handleButtonAction(event) {
-             $webfx.navigation.goTo("../apps/" + event.getSource().getId());
+             $webfx.navigation.goTo("wfx", "../apps/" + event.getSource().getId());
         }
 
         function handleButtonAction2(event, target) {

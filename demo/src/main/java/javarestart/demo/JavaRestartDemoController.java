@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014, Nikita Lipsky, Excelsior LLC.
+ * Copyright (c) 2013-2015, Nikita Lipsky, Excelsior LLC.
  *
  *  Java ReStart is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with Java ReStart.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
 package javarestart.demo;

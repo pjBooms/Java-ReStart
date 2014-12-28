@@ -15,38 +15,30 @@
  *  along with Java ReStart.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package javarestart.demo;
+package javarestart.webfx;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javarestart.JavaRestartLauncher;
+import webfx.browser.BrowserTab;
+import webfx.browser.urlhandlers.URLHandler;
+
+import java.net.URL;
+import java.util.Locale;
 
 /**
+ * Implementation of {@code webfx.browser.urlhandlers.URLHandler} of {@code java://} protocol.
+ * It launches application by {@code java://} URL via Java ReStart.
+ *
  * @author Nikita Lipsky
  */
-public class JavaRestartDemo extends Application {
-    
+public class JavaURLHandler implements URLHandler {
     @Override
-    public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/JavaRestartDemo.fxml"));
-        
-        Scene scene = new Scene(root);
-        
-        stage.setScene(scene);
-        stage.show();
+    public String[] getProtocols() {
+        return new String[]{"java"};
     }
 
-    public static String host;
-
-    public static void main(String[] args) {
-        if (args.length != 0) {
-            host = args[0];
-        } else {
-            host = "http://localhost:8080/apps/";
-        }
-        launch(args);
+    @Override
+    public BrowserTab handle(URL url, Locale locale) {
+        JavaRestartLauncher.fork(URLConverter.convertToHTTP(url).toExternalForm());
+        return null;
     }
-    
 }

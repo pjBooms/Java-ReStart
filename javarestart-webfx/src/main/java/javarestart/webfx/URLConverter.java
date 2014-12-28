@@ -15,38 +15,26 @@
  *  along with Java ReStart.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package javarestart.demo;
+package javarestart.webfx;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
+ * {@code java://} and {@code wfx://} protocols are based on {@code http://}.
+ * This utility class converts URLs of {@code java://} and {@code wfx://} to {@code http://}.
+ *
  * @author Nikita Lipsky
  */
-public class JavaRestartDemo extends Application {
-    
-    @Override
-    public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/JavaRestartDemo.fxml"));
-        
-        Scene scene = new Scene(root);
-        
-        stage.setScene(scene);
-        stage.show();
-    }
+public class URLConverter {
 
-    public static String host;
-
-    public static void main(String[] args) {
-        if (args.length != 0) {
-            host = args[0];
-        } else {
-            host = "http://localhost:8080/apps/";
+    public static URL convertToHTTP(URL url) {
+        try {
+            return url.getProtocol().equals("http")? url : new URL("http", url.getHost(), url.getPort(), url.getFile());
+        } catch (MalformedURLException e) {
+            return url;
         }
-        launch(args);
+
     }
-    
+
 }
