@@ -18,7 +18,8 @@
 package javarestart.webfx;
 
 import javarestart.WebClassLoader;
-import webfx.browser.urlhandlers.WebFXURLHandler;
+import webfx.contentdescriptors.ContentDescriptor;
+import webfx.urlhandlers.URLHandler;
 
 import java.lang.*;
 import java.lang.ClassLoader;
@@ -31,7 +32,7 @@ import java.util.HashMap;
  *
  * @author Nikita Lipsky
  */
-public class WFXURLHandler extends WebFXURLHandler {
+public class WFXURLHandler implements URLHandler {
 
     private HashMap<URL, ClassLoader> classloaders = new HashMap<>();
 
@@ -40,7 +41,6 @@ public class WFXURLHandler extends WebFXURLHandler {
         return new String[]{"wfx"};
     }
 
-    @Override
     public ClassLoader getClassLoader(URL url) {
         if (classloaders.containsKey(url)) {
             return classloaders.get(url);
@@ -53,4 +53,11 @@ public class WFXURLHandler extends WebFXURLHandler {
         classloaders.put(url, cl);
         return cl;
     }
+
+    @Override
+    public Result handle(URL url) {
+        return new Result(ContentDescriptor.FXML.instance(), getClassLoader(url));
+    }
+
+
 }

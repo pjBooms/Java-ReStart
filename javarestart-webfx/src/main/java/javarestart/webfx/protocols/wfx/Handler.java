@@ -20,7 +20,7 @@ package javarestart.webfx.protocols.wfx;
 import javarestart.WebClassLoader;
 import javarestart.webfx.URLConverter;
 import javarestart.webfx.WFXURLHandler;
-import webfx.browser.urlhandlers.URLHandlersRegistry;
+import webfx.urlhandlers.URLHandlersRegistry;
 
 import java.io.IOException;
 import java.net.URL;

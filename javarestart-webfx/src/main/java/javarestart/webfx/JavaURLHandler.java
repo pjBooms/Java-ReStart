@@ -18,14 +18,13 @@
 package javarestart.webfx;
 
 import javarestart.JavaRestartLauncher;
-import webfx.browser.BrowserTab;
-import webfx.browser.urlhandlers.URLHandler;
+import webfx.contentdescriptors.ContentDescriptor;
+import webfx.urlhandlers.URLHandler;
 
 import java.net.URL;
-import java.util.Locale;
 
 /**
- * Implementation of {@code webfx.browser.urlhandlers.URLHandler} of {@code java://} protocol.
+ * Implementation of {@code webfx.urlhandlers.URLHandler} of {@code java://} protocol.
  * It launches application by {@code java://} URL via Java ReStart.
  *
  * @author Nikita Lipsky
@@ -37,8 +36,8 @@ public class JavaURLHandler implements URLHandler {
     }
 
     @Override
-    public BrowserTab handle(URL url, Locale locale) {
+    public Result handle(URL url) {
         JavaRestartLauncher.fork(URLConverter.convertToHTTP(url).toExternalForm());
-        return null;
+        return new Result(ContentDescriptor.NoContent.instance(), null);
     }
 }
