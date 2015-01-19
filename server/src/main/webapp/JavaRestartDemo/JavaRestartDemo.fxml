@@ -34,7 +34,7 @@
           </font>
         </Text>
         <Button  fx:id="Game2048"  onAction="handleButtonAction(event);"  font="$x1" layoutX="63.0" layoutY="128.0" mnemonicParsing="false" prefHeight="54.6204833984375" prefWidth="150.0" text="2048" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
-        <Button  fx:id="Jenesis" onAction="handleButtonAction(event);" font="$x1" layoutX="224.0" layoutY="193.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="150.0" text="Jenesis" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+        <Button  fx:id="Ensemble" onAction="handleButtonAction(event);" font="$x1" layoutX="224.0" layoutY="193.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="150.0" text="Ensemble" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
         <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="407.0" layoutY="138.0" pickOnBounds="true" preserveRatio="true">
           <image>
             <Image url="@java-duke-guitar.png" />
