@@ -68,7 +68,6 @@ You can also run the samples from forked version of Bruno Borges WebFX browser
 point the browser to http://localhost:8080 and click "Java Restart Demo" link.
 
 Run Notes:
-Ensemble demo does not work with Java 8 now and with Java 7 it does not load all resources that are referenced by the demo.
 SWT, Jenesis can run only with 32-bit JRE on Windows (they are using 32-bit native libraries).
 
 Java ReStart on Jelastic

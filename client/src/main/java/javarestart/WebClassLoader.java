@@ -23,9 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -76,7 +74,7 @@ public class WebClassLoader extends URLClassLoader {
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         try {
-            Class c = tryToLoadClass(findResource(name.replace('.', '/') + ".class").openStream());
+            Class c = tryToLoadClass(findResourceImpl(name.replace('.', '/') + ".class").openStream());
             fireClassLoaded(name);
             return c;
         } catch (final Exception e) {
@@ -84,8 +82,16 @@ public class WebClassLoader extends URLClassLoader {
         }
     }
 
-    @Override
-    public URL findResource(final String name) {
+    private URL checkResourceExists(URL url) {
+        try {
+            url.openStream().close();
+            return url;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private URL findResourceImpl(final String name) {
         try {
             return new URL(baseURL.getProtocol(),
                     baseURL.getHost(),
@@ -94,6 +100,11 @@ public class WebClassLoader extends URLClassLoader {
         } catch (final MalformedURLException e) {
             return null;
         }
+    }
+
+    @Override
+    public URL findResource(final String name) {
+        return checkResourceExists(findResourceImpl(name));
     }
 
     @Override
