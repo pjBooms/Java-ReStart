@@ -17,8 +17,8 @@
 */
 package javarestart.webfx.protocols.wfx;
 
+import javarestart.JavaRestartURLConnection;
 import javarestart.WebClassLoader;
-import javarestart.webfx.URLConverter;
 import javarestart.webfx.WFXURLHandler;
 import webfx.urlhandlers.URLHandlersRegistry;
 
@@ -28,7 +28,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
 /**
- *  Implementation of {@code URL§StreamHandler} of {@code wfx://} protocol.
+ *  Implementation of {@code URLStreamHandler} of {@code wfx://} protocol.
  *  It defines classloader for fxml pages to {@link WebClassLoader} of Java ReStart.
  *
  * @author Nikita Lipsky
@@ -42,6 +42,6 @@ public class Handler extends URLStreamHandler {
         if (classLoader != null) {
             return classLoader.getFxml().openConnection();
         }
-        return URLConverter.convertToHTTP(u).openConnection();
+        return new JavaRestartURLConnection(u);
     }
 }

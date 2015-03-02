@@ -21,8 +21,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 
 public class Utils {
@@ -63,7 +63,7 @@ public class Utils {
     }
 
     private static String getText(final URL url) throws IOException {
-        final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        final URLConnection connection = url.openConnection();
         try (LineNumberReader in = new LineNumberReader(
                 new InputStreamReader(connection.getInputStream(), Charset.forName("UTF-8")))) {
 

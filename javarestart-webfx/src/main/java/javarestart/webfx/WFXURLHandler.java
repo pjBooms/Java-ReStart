@@ -42,12 +42,16 @@ public class WFXURLHandler implements URLHandler {
     }
 
     public ClassLoader getClassLoader(URL url) {
+        return classloaders.get(url);
+    }
+
+    public ClassLoader resolveClassLoader(URL url) {
         if (classloaders.containsKey(url)) {
             return classloaders.get(url);
         }
         ClassLoader cl = null;
         try {
-            cl = new WebClassLoader(URLConverter.convertToHTTP(url));
+            cl = new WebClassLoader(url);
         } catch (Exception e) {
         }
         classloaders.put(url, cl);
@@ -56,7 +60,7 @@ public class WFXURLHandler implements URLHandler {
 
     @Override
     public Result handle(URL url) {
-        return new Result(ContentDescriptor.FXML.instance(), getClassLoader(url));
+        return new Result(ContentDescriptor.FXML.instance(), resolveClassLoader(url));
     }
 
 

@@ -67,6 +67,7 @@ public final class JavaRestartLauncher {
         cmdArgs.add(javaLauncherPath.getAbsolutePath());
         cmdArgs.add("-splash:" + splashLocation.getAbsolutePath());
         cmdArgs.add("-Dbinary.css=false");
+        cmdArgs.add("-Djava.protocol.handler.pkgs=javarestart.webfx.protocols");
         cmdArgs.add("-cp");
         cmdArgs.add(classpath);
         cmdArgs.add(JavaRestartLauncher.class.getName());

@@ -17,7 +17,7 @@
 */
 package javarestart.webfx.protocols.java;
 
-import javarestart.webfx.URLConverter;
+import javarestart.JavaRestartURLConnection;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,6 +34,6 @@ public class Handler extends URLStreamHandler {
 
     @Override
     protected URLConnection openConnection(URL u) throws IOException {
-        return URLConverter.convertToHTTP(u).openConnection();
+        return new JavaRestartURLConnection(u);
     }
 }

@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.net.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Nikita Lipsky
@@ -38,9 +39,18 @@ public class WebClassLoader extends URLClassLoader {
 
     private List<ClassLoaderListener> listeners;
 
+    // Workaround for javafx.scene.media.AudioClip limitation.
+    // It only supports http:// and file:// protocols,
+    // so we convert java:// and wfx:// URLs to http:// to let .wav resources to be played
+    // by AudioClip.
+    // TODO: fix the limitation and contribute it to OpenJDK
+    private boolean change4WavToHttp;
+
     public WebClassLoader(final URL baseURL) throws IOException {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
         this.baseURL = baseURL;
+        final String protocol = baseURL.getProtocol();
+        this.change4WavToHttp = Stream.of("java", "wfx").anyMatch(protocol::equals);
         this.descriptor = Utils.getJSON(baseURL);
     }
 
@@ -93,7 +103,9 @@ public class WebClassLoader extends URLClassLoader {
 
     private URL findResourceImpl(final String name) {
         try {
-            return new URL(baseURL.getProtocol(),
+            return new URL(
+                    //see comment above for this hack explanation
+                    change4WavToHttp && name.endsWith(".wav")? "http" : baseURL.getProtocol(),
                     baseURL.getHost(),
                     baseURL.getPort(),
                     baseURL.getPath() + '/' + name);

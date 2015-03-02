@@ -37,7 +37,7 @@ public class JavaURLHandler implements URLHandler {
 
     @Override
     public Result handle(URL url) {
-        JavaRestartLauncher.fork(URLConverter.convertToHTTP(url).toExternalForm());
+        JavaRestartLauncher.fork(url.toExternalForm());
         return new Result(ContentDescriptor.NoContent.instance(), null);
     }
 }
