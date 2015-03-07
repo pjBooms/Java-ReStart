@@ -45,8 +45,10 @@ public class AppResourceFilter implements Filter {
         assert (pathTranslated.charAt(0) == '/');
         int resourceIdx = pathTranslated.indexOf('/', 1) + 1;
         if ((resourceIdx > 0) && (pathTranslated.length() != resourceIdx)) {
-            final String rewritten = APPS_BASE_PATH + pathTranslated.substring(0, resourceIdx) +
-                    "?resource=" + pathTranslated.substring(resourceIdx);
+            String rewritten = APPS_BASE_PATH + pathTranslated.substring(0, resourceIdx);
+            if (!"getAppDescriptor".equals(((HttpServletRequest) request).getQueryString())) {
+                rewritten += "?resource=" + pathTranslated.substring(resourceIdx);
+            }
             ((HttpServletResponse) response).sendRedirect(rewritten);
             return;
         }

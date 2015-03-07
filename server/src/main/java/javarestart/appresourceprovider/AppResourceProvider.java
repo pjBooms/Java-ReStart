@@ -37,15 +37,18 @@ import java.util.regex.Pattern;
 public class AppResourceProvider {
     private static final Pattern PATH_SEP = Pattern.compile(";");
     private static final String APP_PROPERTIES = "app.properties";
-
     private final URLClassLoader loader;
     private final AppDescriptorDto appDescriptor;
+
+    //TODO: move to properties
+    private final String APPS_BASE_PATH = "/apps";
 
     public AppResourceProvider(String appPath, String projectName) throws Exception {
         final Properties appProps = new Properties();
         final File baseDir = new File(appPath, projectName);
         appProps.load(new BufferedInputStream(new FileInputStream(new File(baseDir, APP_PROPERTIES))));
         appDescriptor = new AppDescriptorDto();
+        appDescriptor.setRoot(APPS_BASE_PATH + '/' + projectName);
         appDescriptor.setMain(appProps.getProperty("main"));
         appDescriptor.setSplash(appProps.getProperty("splash"));
         appDescriptor.setSplashCloseOn(appProps.getProperty("splashCloseOn"));

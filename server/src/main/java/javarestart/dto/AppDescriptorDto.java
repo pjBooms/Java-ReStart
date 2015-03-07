@@ -26,10 +26,19 @@ public class AppDescriptorDto implements Serializable {
 
     private static final long serialVersionUID = 6961550511933662410L;
 
+    private String root;
     private String main;
     private String splash;
     private String splashCloseOn;
     private String fxml;
+
+    public String getRoot() {
+        return root;
+    }
+
+    public void setRoot(String root) {
+        this.root = root;
+    }
 
     public String getMain() {
         return main;

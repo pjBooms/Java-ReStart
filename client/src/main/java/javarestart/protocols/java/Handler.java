@@ -15,12 +15,9 @@
  *  along with Java ReStart.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package javarestart.webfx.protocols.wfx;
+package javarestart.protocols.java;
 
-import javarestart.JavaRestartURLConnection;
-import javarestart.WebClassLoader;
-import javarestart.webfx.WFXURLHandler;
-import webfx.urlhandlers.URLHandlersRegistry;
+import javarestart.protocols.JavaRestartURLConnection;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,8 +25,8 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
 /**
- *  Implementation of {@code URLStreamHandler} of {@code wfx://} protocol.
- *  It defines classloader for fxml pages to {@link WebClassLoader} of Java ReStart.
+ * Implementation of {@code URLStreamHandler} of {@code java://} protocol.
+ * It launches application by {@code java://} URL via Java ReStart.
  *
  * @author Nikita Lipsky
  */
@@ -37,11 +34,6 @@ public class Handler extends URLStreamHandler {
 
     @Override
     protected URLConnection openConnection(URL u) throws IOException {
-        WFXURLHandler wfxurlHandler = (WFXURLHandler) URLHandlersRegistry.getHandler(u);
-        WebClassLoader classLoader = (WebClassLoader) wfxurlHandler.getClassLoader(u);
-        if (classLoader != null) {
-            return classLoader.getFxml().openConnection();
-        }
         return new JavaRestartURLConnection(u);
     }
 }

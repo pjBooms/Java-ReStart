@@ -15,7 +15,7 @@
  *  along with Java ReStart.  If not, see <http://www.gnu.org/licenses/>.
  *
 */
-package javarestart;
+package javarestart.protocols;
 
 import java.io.IOException;
 import java.io.InputStream;

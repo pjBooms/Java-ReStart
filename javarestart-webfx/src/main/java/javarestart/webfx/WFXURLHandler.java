@@ -18,13 +18,12 @@
 package javarestart.webfx;
 
 import javarestart.WebClassLoader;
+import javarestart.WebClassLoaderRegistry;
 import webfx.contentdescriptors.ContentDescriptor;
 import webfx.urlhandlers.URLHandler;
 
 import java.lang.*;
-import java.lang.ClassLoader;
 import java.net.URL;
-import java.util.HashMap;
 
 /**
  *  Implementation of {@code wfx://} protocol.
@@ -34,33 +33,14 @@ import java.util.HashMap;
  */
 public class WFXURLHandler implements URLHandler {
 
-    private HashMap<URL, ClassLoader> classloaders = new HashMap<>();
-
     @Override
     public String[] getProtocols() {
         return new String[]{"wfx"};
     }
 
-    public ClassLoader getClassLoader(URL url) {
-        return classloaders.get(url);
-    }
-
-    public ClassLoader resolveClassLoader(URL url) {
-        if (classloaders.containsKey(url)) {
-            return classloaders.get(url);
-        }
-        ClassLoader cl = null;
-        try {
-            cl = new WebClassLoader(url);
-        } catch (Exception e) {
-        }
-        classloaders.put(url, cl);
-        return cl;
-    }
-
     @Override
     public Result handle(URL url) {
-        return new Result(ContentDescriptor.FXML.instance(), resolveClassLoader(url));
+        return new Result(ContentDescriptor.FXML.instance(), WebClassLoaderRegistry.resolveClassLoader(url));
     }
 
 

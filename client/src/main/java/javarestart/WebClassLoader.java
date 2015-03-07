@@ -46,16 +46,24 @@ public class WebClassLoader extends URLClassLoader {
     // TODO: fix the limitation and contribute it to OpenJDK
     private boolean change4WavToHttp;
 
-    public WebClassLoader(final URL baseURL) throws IOException {
+    private WebClassLoader(URL url, JSONObject desc, boolean baseURL) throws IOException {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
-        this.baseURL = baseURL;
-        final String protocol = baseURL.getProtocol();
+        this.baseURL = baseURL? url : new URL(url, (String) desc.get("root"));
+        final String protocol = this.baseURL.getProtocol();
         this.change4WavToHttp = Stream.of("java", "wfx").anyMatch(protocol::equals);
-        this.descriptor = Utils.getJSON(baseURL);
+        this.descriptor = desc;
+    }
+
+    public WebClassLoader(final URL baseURL) throws IOException {
+        this(baseURL, Utils.getJSON(baseURL), true);
     }
 
     public WebClassLoader(String baseURL) throws IOException {
         this(new URL(baseURL));
+    }
+
+    public WebClassLoader(URL url, JSONObject desc) throws IOException{
+        this(url, desc, false);
     }
 
     public void addListener(ClassLoaderListener listener) {
