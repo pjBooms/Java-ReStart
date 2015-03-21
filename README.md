@@ -19,8 +19,13 @@ and executes the application in parallel with downloading.
 The server has a very simple REST interface now:
 
 ```
-GET /{application} -- returns an application descriptor in JSON format (main class name of the application (entry point), splash, etc.)
+GET /{application} -- returns an application descriptor in JSON format
+                      (main class name of the application (entry point), splash, etc.)
 GET /{application}/{resource} -- returns a class/resource of a referenced application
+GET /{application}?bundle=initial --- returns chunked collection of resources that were accessed last time
+                                      (in the order it was accessed last time)
+GET /{application}/{resource}?getAppDescriptor -- returns application descriptor (the same as GET/ {application})
+
 ```
 
 The client in turn has a very simple command line interface:
@@ -31,10 +36,13 @@ java javarestart.JavaRestartLauncher <URL>
 
 where URL has a form [BaseURL]/[AppName].
 
-First, the client fetches an application descriptor, if a splash is scpecified in the descriptor the client downloads it and immediatly shows, 
-then it downloads main class of the application and loads it using a classloader that tries to emulate default JVM application classloader 
-but instead of loading the classes from HDD it fetches them from URL using REST interface above. 
-This way, only required classes/resources are downloaded by the client and application starts right from the first downloaded main class.
+First, the client fetches an application descriptor, if a splash is scpecified in the descriptor the client downloads it
+and immediatly shows,
+then it downloads initial bundle and in parallel loads and executes main class of the application
+using a classloader that tries to emulate default JVM application classloader
+but instead of loading the classes from HDD it fetches them from initial bundle or URLs using REST interface above.
+This way, only required classes/resources are downloaded by the client and application starts right from the first
+downloaded main class.
 
 How to run 
 =====
