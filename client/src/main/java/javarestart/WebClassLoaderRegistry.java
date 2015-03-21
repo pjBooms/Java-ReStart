@@ -31,8 +31,16 @@ public class WebClassLoaderRegistry {
     private static HashMap<URL, WebClassLoader> classloaders = new HashMap<>();
     private static HashMap<URL, WebClassLoader> associatedClassloaders = new HashMap<>();
 
+    private static URL normalizeURL(URL url) {
+        try {
+            return url.getFile().endsWith("/")? url : new URL(url.toExternalForm() + "/");
+        } catch (MalformedURLException e) {
+            return url;
+        }
+    }
+
     public static WebClassLoader getClassLoader(URL url) {
-        return classloaders.get(url);
+        return classloaders.get(normalizeURL(url));
     }
 
     public static WebClassLoader resolveClassLoader(URL url) {
@@ -40,7 +48,7 @@ public class WebClassLoaderRegistry {
             return null;
         }
         WebClassLoader cl = null;
-        URL baseURL = url;
+        URL baseURL = normalizeURL(url);
         try {
             URL rootURL = new URL(baseURL, "/");
             while (((cl = associatedClassloaders.get(baseURL)) == null) && !baseURL.equals(rootURL)) {
@@ -52,17 +60,21 @@ public class WebClassLoaderRegistry {
         if (cl == null) {
             try {
                 JSONObject desc = Utils.getJSON(new URL(
-                        url.toExternalForm() + "?getAppDescriptor"));
+                        url.getProtocol(),
+                        url.getHost(),
+                        url.getPort(),
+                        url.getPath() + "?getAppDescriptor"));
                 if (desc != null) {
                     cl = new WebClassLoader(url, desc);
                 }
             } catch (Exception e) {
             }
         }
-        associatedClassloaders.put(url, cl);
+        associatedClassloaders.put(normalizeURL(url), cl);
         if (cl != null) {
-            associatedClassloaders.put(cl.getBaseURL(), cl);
-            classloaders.put(cl.getBaseURL(), cl);
+            URL clURL = normalizeURL(cl.getBaseURL());
+            associatedClassloaders.put(clURL, cl);
+            classloaders.put(clURL, cl);
         }
         return cl;
     }

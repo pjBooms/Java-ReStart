@@ -62,17 +62,20 @@ public class AppResourceProvider {
     }
 
     public URLConnection load(final String resourceName) throws ResourceNotFoundException {
+        URL result = null;
         try {
-            final URL result = loader.findResource(resourceName);
+            result = loader.findResource(resourceName);
             if (result == null) {
                 throw new ResourceNotFoundException("Requested resource not found: " + resourceName);
             }
+            return result.openConnection();
+        } catch (final IOException e) {
+            result = null;
+            throw new ResourceNotFoundException("Requested resource not found: " + resourceName, e);
+        } finally {
             if (!loaded.containsKey(resourceName)) {
                 loaded.put(resourceName, result);
             }
-            return result.openConnection();
-        } catch (final IOException e) {
-            throw new ResourceNotFoundException("Requested resource not found: " + resourceName, e);
         }
     }
 

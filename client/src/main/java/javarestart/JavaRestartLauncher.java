@@ -163,9 +163,8 @@ public final class JavaRestartLauncher {
             return;
         }
 
-        final WebClassLoader loader = new WebClassLoader(args[0]);
+        final WebClassLoader loader = WebClassLoaderRegistry.resolveClassLoader(new URL(args[0]));
         Thread.currentThread().setContextClassLoader(loader);
-        loader.preLoadInitial();
         String main;
         final JSONObject obj = Utils.getJSON(args[0]);
         if (args.length < 2) {

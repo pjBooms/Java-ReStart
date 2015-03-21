@@ -125,12 +125,17 @@ public class ApplicationController {
                     writer.print(CRLF);
                     writer.print(resName);
                     writer.print(CRLF);
-                    URLConnection conn = entry.getValue().openConnection();
-                    conn.connect();
-                    writer.print(Integer.toHexString(conn.getContentLength()));
-                    writer.print(CRLF);
-                    writer.flush();
-                    IOUtils.copy(conn.getInputStream(), output);
+                    URL url = entry.getValue();
+                    if (url != null) {
+                        URLConnection conn = url.openConnection();
+                        conn.connect();
+                        writer.print(Integer.toHexString(conn.getContentLength()));
+                        writer.print(CRLF);
+                        writer.flush();
+                        IOUtils.copy(conn.getInputStream(), output);
+                    } else {
+                        writer.print(Integer.toHexString(-1));
+                    }
                     output.flush();
                     writer.print(CRLF);
             }

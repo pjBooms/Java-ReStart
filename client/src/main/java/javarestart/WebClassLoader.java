@@ -23,7 +23,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -39,7 +39,7 @@ public class WebClassLoader extends URLClassLoader {
 
     private List<ClassLoaderListener> listeners;
 
-    private Hashtable<String, byte[]> initialBundle = new Hashtable<>();
+    private HashMap<String, byte[]> initialBundle = new HashMap<>();
 
     // Workaround for javafx.scene.media.AudioClip limitation.
     // It only supports http:// and file:// protocols,
@@ -54,13 +54,10 @@ public class WebClassLoader extends URLClassLoader {
         final String protocol = this.baseURL.getProtocol();
         this.change4WavToHttp = Stream.of("java", "wfx").anyMatch(protocol::equals);
         this.descriptor = desc;
+        preLoadInitial();
     }
 
-    public WebClassLoader(final URL baseURL) throws IOException {
-        this(baseURL, Utils.getJSON(baseURL), true);
-    }
-
-    public void preLoadInitial() {
+    private void preLoadInitial() {
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -75,12 +72,15 @@ public class WebClassLoader extends URLClassLoader {
                             return;
                         }
                         String name = Utils.readAsciiLine(in); //TODO: name can be not Ascii
-                        int resLength = Integer.parseInt(Utils.readAsciiLine(in), 16);
-                        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                        Utils.copy(in, buffer, resLength);
-                        initialBundle.put(name, buffer.toByteArray());
-                        Utils.readAsciiLine(in);
-                        System.out.println("preLoaded " + name);
+                        int resLength = Integer.parseUnsignedInt(Utils.readAsciiLine(in), 16);
+                        if (resLength != -1) {
+                            final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                            Utils.copy(in, buffer, resLength);
+                            initialBundle.put(name, buffer.toByteArray());
+                            Utils.readAsciiLine(in);
+                        } else {
+                            initialBundle.put(name, null);
+                        }
                     }
 
                 } catch (Throwable e) {
@@ -92,11 +92,7 @@ public class WebClassLoader extends URLClassLoader {
         thread.start();
     }
 
-    public WebClassLoader(String baseURL) throws IOException {
-        this(new URL(baseURL));
-    }
-
-    public WebClassLoader(URL url, JSONObject desc) throws IOException{
+    WebClassLoader(URL url, JSONObject desc) throws IOException{
         this(url, desc, false);
     }
 
@@ -130,17 +126,15 @@ public class WebClassLoader extends URLClassLoader {
             if (initialBundle.containsKey(res)) {
                 byte[] classBytes = initialBundle.get(res);
                 initialBundle.remove(res);
-                System.out.println("loaded preLoaded " + name);
                 Class c = defineClass(null, classBytes, 0, classBytes.length);
                 fireClassLoaded(name);
                 return c;
             }
             Class c = tryToLoadClass(findResourceImpl(name.replace('.', '/') + ".class").openStream());
             fireClassLoaded(name);
-            System.out.println("loaded not preLoaded " + name);
             return c;
         } catch (final Exception e) {
-            throw new ClassNotFoundException(e.getMessage());
+            throw new ClassNotFoundException(e.getMessage(), e);
         }
     }
 
@@ -154,7 +148,8 @@ public class WebClassLoader extends URLClassLoader {
     }
 
     private URL findResourceImpl(final String name) {
-        if (initialBundle.containsKey(name)) {
+        boolean handleWavSpecially = change4WavToHttp && name.endsWith(".wav");
+        if (handleWavSpecially && initialBundle.containsKey(name)) {
             int dot = name.lastIndexOf(".");
             String resName;
             String ext;
@@ -170,7 +165,6 @@ public class WebClassLoader extends URLClassLoader {
                 resName = resName.substring(slash + 1);
             }
             File f = Utils.fetchResourceToTempFile(resName, ext, new ByteArrayInputStream(initialBundle.get(name)));
-            System.out.println("loaded preLoaded " + name);
             try {
                 return f.toURI().toURL();
             } catch (MalformedURLException e) {
@@ -180,7 +174,7 @@ public class WebClassLoader extends URLClassLoader {
         try {
             return new URL(
                     //see comment above for this hack explanation
-                    change4WavToHttp && name.endsWith(".wav")? "http" : baseURL.getProtocol(),
+                    handleWavSpecially? "http" : baseURL.getProtocol(),
                     baseURL.getHost(),
                     baseURL.getPort(),
                     baseURL.getPath() + '/' + name);
@@ -191,14 +185,17 @@ public class WebClassLoader extends URLClassLoader {
 
     @Override
     public URL findResource(final String name) {
+        if (initialBundle.containsKey(name)) {
+            return initialBundle.get(name) == null? null: findResourceImpl(name);
+        }
         return checkResourceExists(findResourceImpl(name));
     }
 
     @Override
     public InputStream getResourceAsStream(String name) {
         if (initialBundle.containsKey(name)) {
-            System.out.println("loaded preLoaded " + name);
-            return new ByteArrayInputStream(initialBundle.get(name));
+            byte[] bytes = initialBundle.get(name);
+            return bytes == null? null: new ByteArrayInputStream(bytes);
         }
         return super.getResourceAsStream(name);
     }
@@ -228,5 +225,30 @@ public class WebClassLoader extends URLClassLoader {
 
     public URL getBaseURL() {
         return baseURL;
+    }
+
+    private String resourceName(URL url) {
+        String burl = baseURL.toExternalForm();
+        String eurl = url.toExternalForm();
+        int length = burl.endsWith("/") ? burl.length() : burl.length() + 1;
+        return eurl.length()<=length? "" : eurl.substring(length);
+    }
+
+    public boolean isPreLoaded(URL url) {
+        return initialBundle.containsKey(resourceName(url));
+    }
+
+    public InputStream getPreLoadedResourceAsStream(URL url) throws IOException {
+        String name = resourceName(url);
+        byte[] bytes = initialBundle.get(name);
+        if (bytes == null) {
+            throw new FileNotFoundException("Resource not found: " + url.toExternalForm());
+        }
+        return new ByteArrayInputStream(bytes);
+    }
+
+    public long getPreLoadedResourceLength(URL url) {
+        byte[] bytes = initialBundle.get(resourceName(url));
+        return bytes == null? -1 : bytes.length;
     }
 }
