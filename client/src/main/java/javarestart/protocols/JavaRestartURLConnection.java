@@ -152,7 +152,7 @@ public class JavaRestartURLConnection extends URLConnection {
             for (int i = 0; i < CONNECT_ATTEMPTS; i++) {
                 try {
                     return redirectConnection.getInputStream();
-                } catch (SocketTimeoutException e) {
+                } catch (SocketTimeoutException | ConnectException e) {
                 }
                 redirectConnection = convertToHTTP(url).openConnection();
                 redirectConnection.setConnectTimeout(CONNECTION_TIMEOUT);

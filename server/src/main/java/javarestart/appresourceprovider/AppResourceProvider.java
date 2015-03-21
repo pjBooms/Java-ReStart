@@ -35,7 +35,7 @@ public class AppResourceProvider {
     private final URLClassLoader loader;
     private final AppDescriptorDto appDescriptor;
 
-    private final TreeMap<String, URL> loaded = new TreeMap<>();
+    private final LinkedHashMap<String, URL> loaded = new LinkedHashMap<>();
 
     //TODO: move to properties
     private final String APPS_BASE_PATH = "/apps";
