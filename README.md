@@ -78,6 +78,31 @@ point the browser to http://localhost:8080 and click "Java Restart Demo" link.
 Run Notes:
 SWT, Jenesis can run only with 32-bit JRE on Windows (they are using 32-bit native libraries).
 
+New protocols
+=====
+The Java ReStart client implements two new internet protocols:
+
+`java://` and `wfx://`
+
+both they are based on JavaRestartURLConnection that tries to use collected server
+application usage profile thus prefetching required classes/resources with a single HTTP request.
+Using these protocols the startup time is drastically improved in compare with usual http://
+when you launch your application from really remote server. From my experiments the startup time
+of all samples becomes comparable lo local startup time! It is important exploration, IMHO.
+It means that all that stuff that you have on your desktop computers is not actually needed:
+it can run from remote source as fast as locally!
+
+Java ReStart demo uses the protocol by default now
+(executing demos from remote server -- javarestart.com -- see below).
+My fork of WebFX also runs the demos using the protocol.
+
+Why are there two protocols?
+  * `wfx://` protocol is used for loading the content into FXML page of a new tab of the WebFX browser.
+  * `java://` protocol is used for launching remote applications using Java ReStart.
+
+How to use the protocols: add `-Djava.protocol.handler.pkgs=javarestart.protocols` JVM property to
+launching command to let JVM know the new protocols.
+
 Java ReStart on Jelastic
 =====
 The Java ReStart server with the sample applications is deployed now on Jelastic:
@@ -87,7 +112,7 @@ http://javarestart.com/
 So you may run the samples above now with just Java ReStart client (no need to deploy on local server):
 
 ```
-java javarestart.JavaRestartLauncher http://javarestart.com/apps/<AppName>
+java -Djava.protocol.handler.pkgs=javarestart.protocols javarestart.JavaRestartLauncher java://javarestart.com/apps/<AppName>
 ```
 
 Or via my fork of WebFX browser:
