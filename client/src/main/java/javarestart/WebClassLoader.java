@@ -17,6 +17,7 @@
 */
 package javarestart;
 
+import javarestart.protocols.ResourceRequest;
 import org.json.simple.JSONObject;
 
 import java.io.*;
@@ -26,6 +27,7 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 /**
@@ -40,6 +42,11 @@ public class WebClassLoader extends URLClassLoader {
     private List<ClassLoaderListener> listeners;
 
     private HashMap<String, byte[]> initialBundle = new HashMap<>();
+    private volatile String curLoading;
+
+    private AtomicReference<ResourceRequest> resourceRequest = new AtomicReference<>();
+
+    private volatile boolean preloading;
 
     // Workaround for javafx.scene.media.AudioClip limitation.
     // It only supports http:// and file:// protocols,
@@ -58,6 +65,7 @@ public class WebClassLoader extends URLClassLoader {
     }
 
     private void preLoadInitial() {
+        preloading = true;
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -72,6 +80,7 @@ public class WebClassLoader extends URLClassLoader {
                             return;
                         }
                         String name = Utils.readAsciiLine(in); //TODO: name can be not Ascii
+                        curLoading = name;
                         int resLength = Integer.parseUnsignedInt(Utils.readAsciiLine(in), 16);
                         if (resLength != -1) {
                             final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -81,10 +90,19 @@ public class WebClassLoader extends URLClassLoader {
                         } else {
                             initialBundle.put(name, null);
                         }
+
+                        ResourceRequest resourceRequest = WebClassLoader.this.resourceRequest.get();
+                        if ((resourceRequest != null) && isPreLoaded(resourceRequest.getRequest())) {
+                            resourceRequest.contentReady(getPreloadResource(resourceRequest.getRequest()));
+                            WebClassLoader.this.resourceRequest.compareAndSet(resourceRequest, null);
+                        }
                     }
 
                 } catch (Throwable e) {
                     e.printStackTrace();
+                } finally {
+                    preloading = false;
+                    curLoading = null;
                 }
             }
         };
@@ -238,9 +256,17 @@ public class WebClassLoader extends URLClassLoader {
         return initialBundle.containsKey(resourceName(url));
     }
 
+    public boolean isPreLoading(URL url) {
+        String resName = resourceName(url);
+        return resName.equals(curLoading) || initialBundle.containsKey(resName);
+    }
+
+    private byte[] getPreloadResource(URL url) {
+        return initialBundle.get(resourceName(url));
+    }
+
     public InputStream getPreLoadedResourceAsStream(URL url) throws IOException {
-        String name = resourceName(url);
-        byte[] bytes = initialBundle.get(name);
+        byte[] bytes = getPreloadResource(url);
         if (bytes == null) {
             throw new FileNotFoundException("Resource not found: " + url.toExternalForm());
         }
@@ -248,7 +274,15 @@ public class WebClassLoader extends URLClassLoader {
     }
 
     public long getPreLoadedResourceLength(URL url) {
-        byte[] bytes = initialBundle.get(resourceName(url));
+        byte[] bytes = getPreloadResource(url);
         return bytes == null? -1 : bytes.length;
+    }
+
+    public void requestResource(ResourceRequest resourceRequest) {
+        this.resourceRequest.set(resourceRequest);
+    }
+
+    public boolean preloadingGoes() {
+        return preloading;
     }
 }

@@ -17,14 +17,15 @@
 */
 package javarestart.protocols;
 
+import javarestart.Utils;
 import javarestart.WebClassLoader;
 import javarestart.WebClassLoaderRegistry;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.*;
 import java.security.Permission;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  *
@@ -51,6 +52,14 @@ public class JavaRestartURLConnection extends URLConnection {
 
     private static final int CONNECT_ATTEMPTS = 5;
     private static final int CONNECTION_TIMEOUT = 1500;
+
+    private static final boolean USE_CONTEST_OPTIMIZATION = true;
+
+    private static final Executor requestsExecutor = Executors.newCachedThreadPool(r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true);
+        return t;
+    });
 
     private URLConnection redirectConnection;
 
@@ -143,22 +152,58 @@ public class JavaRestartURLConnection extends URLConnection {
         return inMem? super.getPermission() : redirectConnection.getPermission();
     }
 
+    private InputStream getHTTPInputStream() throws IOException {
+        redirectConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+        for (int i = 0; i < CONNECT_ATTEMPTS; i++) {
+            try {
+                return redirectConnection.getInputStream();
+            } catch (SocketTimeoutException | ConnectException e) {
+            } catch (Throwable e) {
+                throw e;
+            }
+            redirectConnection = convertToHTTP(url).openConnection();
+            redirectConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+            redirectConnection.connect();
+        }
+        throw new SocketTimeoutException("Failed to connect to " + url + " with " + CONNECT_ATTEMPTS + " attempts.");
+    }
+
     @Override
     public InputStream getInputStream() throws IOException {
         if (inMem) {
             return classLoader.getPreLoadedResourceAsStream(getURL());
-        } else {
-            redirectConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-            for (int i = 0; i < CONNECT_ATTEMPTS; i++) {
-                try {
-                    return redirectConnection.getInputStream();
-                } catch (SocketTimeoutException | ConnectException e) {
-                }
-                redirectConnection = convertToHTTP(url).openConnection();
-                redirectConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-                redirectConnection.connect();
+        } else if (USE_CONTEST_OPTIMIZATION && (classLoader != null) && classLoader.preloadingGoes()) {
+            // Optimization case.
+            // We try to get result from preloading resource or from getting the resource from separate URL
+            // using the first result of the contest
+            if (classLoader.isPreLoaded(url)) {
+                inMem = true;
+                return classLoader.getPreLoadedResourceAsStream(getURL());
             }
-            throw new SocketTimeoutException("Failed to connect to " + url + " with " + CONNECT_ATTEMPTS + " attempts.");
+            final ResourceRequest resourceRequest = new ResourceRequest(url);
+            classLoader.requestResource(resourceRequest);
+            if (!classLoader.isPreLoading(url)) {
+                requestsExecutor.execute(() -> {
+                    try {
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        Utils.copy(getHTTPInputStream(), out);
+                        resourceRequest.contentReady(out.toByteArray());
+                    } catch (IOException e) {
+                        resourceRequest.fail(e);
+                    }
+                });
+            }
+            resourceRequest.waitForContent();
+            if (resourceRequest.isFailed()) {
+                throw resourceRequest.getFail();
+            }
+            byte[] content = resourceRequest.getContent();
+            if (content == null) {
+                throw new FileNotFoundException("Resource not found: " + url.toExternalForm());
+            }
+            return new ByteArrayInputStream(content);
+        } else {
+            return getHTTPInputStream();
         }
     }
 

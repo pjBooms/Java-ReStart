@@ -54,7 +54,7 @@ public class Utils {
         }
     }
 
-    static void copy(InputStream in, OutputStream out) throws IOException {
+    public static void copy(InputStream in, OutputStream out) throws IOException {
         int nRead;
         byte[] data = new byte[16384];
 
