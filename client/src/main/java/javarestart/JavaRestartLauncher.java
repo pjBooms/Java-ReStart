@@ -163,6 +163,8 @@ public final class JavaRestartLauncher {
             return;
         }
 
+        System.setProperty("java.protocol.handler.pkgs","javarestart.protocols");
+
         final WebClassLoader loader = WebClassLoaderRegistry.resolveClassLoader(new URL(args[0]));
         Thread.currentThread().setContextClassLoader(loader);
         String main;
