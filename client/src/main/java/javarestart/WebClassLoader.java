@@ -53,12 +53,15 @@ public class WebClassLoader extends URLClassLoader {
     // TODO: fix the limitation and contribute it to OpenJDK
     private boolean change4WavToHttp;
 
+    private HashSet<String> includePackages = new HashSet<>();
+
     private WebClassLoader(URL url, JSONObject desc, boolean baseURL) throws IOException {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
         this.baseURL = baseURL? url : new URL(url, (String) desc.get("root"));
         final String protocol = this.baseURL.getProtocol();
         this.change4WavToHttp = Stream.of("java", "wfx").anyMatch(protocol::equals);
         this.descriptor = desc;
+        parseIncludePackages();
         preLoadInitial();
     }
 
@@ -108,6 +111,14 @@ public class WebClassLoader extends URLClassLoader {
         thread.start();
     }
 
+    private void parseIncludePackages() {
+        String packsProp = getDescField("includePackages");
+        if (packsProp == null) {
+            return;
+        }
+        includePackages.addAll(Arrays.asList(packsProp.split(";")));
+    }
+
     WebClassLoader(URL url, JSONObject desc) throws IOException{
         this(url, desc, false);
     }
@@ -141,26 +152,54 @@ public class WebClassLoader extends URLClassLoader {
         try {
             if (initialBundle.containsKey(res)) {
                 byte[] classBytes = initialBundle.get(res);
+                if (classBytes == null) {
+                    throw new ClassNotFoundException("resource " + name + " not found");
+                }
                 initialBundle.remove(res);
                 Class c = defineClass(null, classBytes, 0, classBytes.length);
                 fireClassLoaded(name);
                 return c;
             }
-            Class c = tryToLoadClass(findResourceImpl(name.replace('.', '/') + ".class").openStream());
+            URL resource = findResourceImpl(name.replace('.', '/') + ".class");
+            if (resource == null) {
+                throw new ClassNotFoundException("resource " + name + " not found");
+            }
+            Class c = tryToLoadClass(resource.openStream());
             fireClassLoaded(name);
             return c;
+        } catch (ClassNotFoundException e) {
+            throw e;
         } catch (final Exception e) {
             throw new ClassNotFoundException(e.getMessage(), e);
         }
     }
 
     private URL checkResourceExists(URL url) {
+        if (url == null) return null;
         try {
             url.openStream().close();
             return url;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private static final int INCLUDE_PACKAGES_MAX_DEPTH = 3;
+
+    private boolean potentiallyExists(String name) {
+        if (includePackages.isEmpty()) {
+            return true;
+        }
+        int i = 0;
+        int pos = name.indexOf('/');
+        if (pos == -1) return includePackages.contains(".");
+        do {
+            if (includePackages.contains(name.substring(0, pos))) return true;
+
+            pos = name.indexOf('/', pos + 1);
+
+        } while ((pos != -1) && (++i != INCLUDE_PACKAGES_MAX_DEPTH));
+        return false;
     }
 
     private URL findResourceImpl(final String name) {
@@ -186,6 +225,9 @@ public class WebClassLoader extends URLClassLoader {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
+        }
+        if (!potentiallyExists(name)) {
+            return null;
         }
         try {
             return new URL(

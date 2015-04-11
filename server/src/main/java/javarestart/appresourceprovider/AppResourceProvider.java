@@ -50,6 +50,7 @@ public class AppResourceProvider {
         appDescriptor.setSplash(appProps.getProperty("splash"));
         appDescriptor.setSplashCloseOn(appProps.getProperty("splashCloseOn"));
         appDescriptor.setFxml(appProps.getProperty("fxml"));
+        appDescriptor.setIncludePackages(appProps.getProperty("includePackages"));
         final String[] classPath = PATH_SEP.split(appProps.getProperty("classpath"));
         final List<URL> urls = new ArrayList<>(classPath.length);
         for (final String path : classPath) {

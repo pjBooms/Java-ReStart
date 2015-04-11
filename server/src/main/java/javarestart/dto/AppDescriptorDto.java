@@ -31,6 +31,7 @@ public class AppDescriptorDto implements Serializable {
     private String splash;
     private String splashCloseOn;
     private String fxml;
+    private String includePackages;
 
     public String getRoot() {
         return root;
@@ -70,5 +71,13 @@ public class AppDescriptorDto implements Serializable {
 
     public void setSplashCloseOn(String splashCloseOn) {
         this.splashCloseOn = splashCloseOn;
+    }
+
+    public String getIncludePackages() {
+        return includePackages;
+    }
+
+    public void setIncludePackages(String includePackages) {
+        this.includePackages = includePackages;
     }
 }
