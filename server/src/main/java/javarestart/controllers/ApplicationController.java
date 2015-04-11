@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
@@ -119,7 +120,8 @@ public class ApplicationController {
             OutputStream output = response.getOutputStream();
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(output), true)
         ) {
-            for (Entry<String, URL> entry: resourceProvider.getInitialBundle().entrySet()){
+            Map<String, URL> bundle = resourceProvider.getInitialBundle();
+            for (Entry<String, URL> entry: bundle.entrySet().toArray(new Entry[bundle.size()])){
                     String resName = entry.getKey();
                     writer.print(Integer.toHexString(resName.length()));
                     writer.print(CRLF);
