@@ -24,9 +24,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -207,6 +205,30 @@ public class WebClassLoader extends URLClassLoader {
             return initialBundle.get(name) == null? null: findResourceImpl(name);
         }
         return checkResourceExists(findResourceImpl(name));
+    }
+
+    /**
+     * Returns none or zero resources: it just wraps findResource now.
+     * TODO: extend client-server protocol to support fetching multiple resources by the given name.
+     */
+    @Override
+    public Enumeration<URL> findResources(String name) throws IOException {
+        URL url = findResource(name);
+        if (url == null) return Collections.emptyEnumeration();
+        return new Enumeration<URL>() {
+            private boolean hasMore = true;
+
+            @Override
+            public boolean hasMoreElements() {
+                return hasMore;
+            }
+
+            @Override
+            public URL nextElement() {
+                hasMore = false;
+                return url;
+            }
+        };
     }
 
     @Override
