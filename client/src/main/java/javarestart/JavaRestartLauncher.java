@@ -68,6 +68,7 @@ public final class JavaRestartLauncher {
 
         ArrayList<String> cmdArgs = new ArrayList<>();
         cmdArgs.add(javaLauncherPath.getAbsolutePath());
+        cmdArgs.add("-Xss1m");
         cmdArgs.add("-splash:" + splashLocation.getAbsolutePath());
         cmdArgs.add("-Dbinary.css=false");
         cmdArgs.add("-Djava.protocol.handler.pkgs=javarestart.protocols");
