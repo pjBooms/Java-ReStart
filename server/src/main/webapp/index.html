@@ -1,16 +1,107 @@
 <html>
     <head>
-        <title>WebFX Samples</title>
+        <title>Java ReStart with WebFX</title>
     </head>
     <body>
-        <h3>WebFX Samples</h3>
-        <a href="helloworld/helloworld.fxml">Hello World</a><br/>
-        <a href="hellogroovy/hellogroovy.fxml">Hello Groovy</a><br/>
-        <a href="login/login.fxml">Login</a><br/>
-        <a href="metronome/metronome.fxml">Metronome</a> <br/>
-        <a href="media/media.fxml">Media</a> <br/>
-        <a href="JavaRestartDemo/JavaRestartDemo.fxml">Java Restart Demo</a> <br/>
-        <a href="WebFXDemo/WebFXDemo.fxml">WebFX Demo</a> <br/>
+        <h2>Welcome to Java ReStart with WebFX!</h2>
+        <!--It is a demo site of a concept of a new web called WebFX.<br/>-->
+        <!--You may ask, what's wrong with old Web?<br/>-->
+        <!--IMHO, the main problem with old Web is JavaScript.-->
+        <!--JavaScript is ineffective, it's hard to write complex programs in JavaScript-->
+        <!--and other languages that are translated to JavaScript have issues.-->
+        <!--And if we look at modern browsers we can notice that they are not HTML renderers anymore.-->
+        <!--They are more JavaScript VM engines today.<br/>-->
+        <!--However there is a better VM that is called Java VM.-->
+        <!--So the main idea of WebFX project is to replace JavaScript VM with Java VM in the Web.<p/>-->
+        The site presents two open source projects:
+        <a href="https://github.com/brunoborges/webfx">WebFX</a> and
+        <a href="https://github.com/pjBooms/Java-ReStart">Java ReStart</a>.<p/>
 
+        To run the samples below you will need <a href="http://www.java.com/en/download/">Java 8</a> and
+        a small <a href="https://github.com/pjBooms/Java-ReStart"> executable jar</a> that you may run as:<p/>
+        <code>java -jar JavaRestart.jar</code><p/>
+        It will run WebFX browser (located remotely) from which you can run the samples below.
+        (The samples will not run in a traditional browser.)<p/>
+
+        <h3>WebFX samples</h3>
+        <p/>
+        <a href="WebFXDemo/WebFXDemo.fxml">WebFX Demo</a> - collection of WebFX samples<br/>
+        <a href="JavaRestartDemo/JavaRestartDemo.fxml">Java ReStart Demo</a> - collection of Java ReStart demos<br/>
+        <a href="helloworld/helloworld.fxml">Hello World</a> - the simplest FXML/JavaScript page<br/>
+        <a href="hellogroovy/hellogroovy.fxml">Hello Groovy</a> - the simplest FXML/Groovy page<br/>
+        <a href="login/login.fxml">Login</a> - tip: login as "metronome" to come into the demo below<br/>
+        <a href="metronome/metronome.fxml">Metronome</a> - the simplest JavaFX animation demo<br/>
+        <a href="media/media.fxml">Media</a> - the simplest JavaFX video player demo<br/>
+
+        <h3>What is WebFX and Java ReStart</h3>
+        WebFX is an attempt to create a new web where HTML is replaced with FXML - the markup language for
+        <a href="http://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html">JavaFX</a> UI,
+        and the logic can be written in any programming language that is available on top of Java platform
+        from JavaScript, Groovy, JRuby to Java, Kotlin and Scala.
+        Java ReStart is a complimentary project that acts as transport layer for WebFX allowing FXML pages
+        to reference arbitrary Java byte code on a web server and hence any custom JavaFX UI components
+        and Java third-party libraries. In addition, Java ReStart allows to run arbitrary Java applications
+        instantly from a web server downloading only required parts of applications on demand and executing
+        them in parallel with downloading.
+
+        <h3> Some more details</h3>
+
+        Any scripting language that is available on of Java platform such as JavaScript, Groovy, JRuby
+        can be used for writing UI logic in WebFX technology - the languages can be embedded transparently into FXML.
+        This way you may employ rapid style development that developers used to use in the traditional web.
+        For instance, <a href="helloworld/helloworld.fxml">Hello World</a> sample below uses simple
+        <a href="https://github.com/brunoborges/webfx/blob/master/webfx-samples/src/main/webapp/helloworld/helloworld.js"> JavaScript</a> code,
+        while <a href="hellogroovy/hellogroovy.fxml">Hello Groovy</a> sample uses simple
+        <a href="https://github.com/brunoborges/webfx/blob/master/webfx-samples/src/main/webapp/hellogroovy/hellogroovy.groovy">Groovy</a> script code.<p/>
+
+        Moreover, your FXML files may reference arbitrary Java byte code on a web server and hence any custom JavaFX UI components and Java third-party libraries
+        via <a href="https://github.com/pjBooms/Java-ReStart">Java ReStart</a> technology.
+        So this way, you may write your client-side logic on any language that is available on top of Java platform such as Scala, Kotlin, whatever.
+        For instance,
+        <a href="wfx://javarestart.com/apps/RestDemo">REST demo</a> can play music from remote server
+        and the communication with the server is written in pure Java, while
+        <a href="https://github.com/pjBooms/Java-ReStart/blob/master/apps/RestDemo/controller.js">UI</a>
+        is handled by JavaScript.
+        You may also check <a href="wfx://javarestart.com/apps/Game2048">2048</a> game that is pure
+        <a href="https://github.com/brunoborges/fx2048/tree/master/src/game2048">Java</a> code.
+        In addition, Java ReStart allows to run arbitrary Java applications instantly from a web server downloading
+        only required parts of applications on demand and executing them in parallel with downloading.
+        This way applications run instantly like in the Web.
+        For instance, you may run <a href="java://javarestart.com/apps/Game2048">2048 game</a>
+        not in a browser tab but as separate application.<p/>
+
+        <h3> Video links </h3>
+
+        This project is developed mainly on hackathons <a href="http://www.excelsior-usa.com/blog/news/hack-day-i/#more-1906">like this</a>.<br/>
+        And I have some pitch videos (3 minutes in length) from the hackathons.
+        So if you do no want to run the samples above (or they do not work for you for some reason)
+        you may just watch the videos below demonstrating the projects:
+        <p/>
+
+        <a href="https://www.youtube.com/watch?v=2LUF7lgpKLg#t=10">WebFX browser</a> inside WebFX demo<br/>
+        <a href="http://vk.com/video-45718857_166854884">Java ReStart demo</a> (in Russian)<br/>
+        <a href="https://www.youtube.com/watch?v=bzmdkjnbFkI">WebFX Overview</a> and Demo on RaspberryPi by <a href="https://github.com/brunoborges">Bruno Borges</a>.</br>
+        <p/>
+
+        There are also long run videos - project <b>manifests</b>:
+        <p/>
+        <a href="http://video.fosdem.org/2015/devroom-java/java_restart_webfx__CAM_ONLY.mp4">Java restart with WebFX</a> - FOSDEM 2015 presentation.<br/>
+        <a href="http://devday.ru/report/22">Web 3.0: a tale about future of internet and IT</a> - DevDay @ 2GIS presentation (in Russian).<br/>
+
+        <h3>Your help is welcome!</h3>
+        I understand that this page looks ugly, especially for a technology pretending to be the new Web.<br/>
+        But I am a <a href="http://excelsiorjet.com">JVM</a> engineer, not a web developer.
+        However the page is available on
+        <a href="https://github.com/pjBooms/Java-ReStart/blob/master/server/src/main/webapp/index.html">github</a>.
+        So if you can help to beautify it, please provide a pool request.<br/>
+        And if you are a JavaFX technology fan and have some beauty examples that you would like
+        to be available for instant running from WebFX browser via this site, please also either
+        provide a pool request or <a href="mailto:nikita.v.lipsky@gmail.com">contact me</a>.
+        Contriubutions to the projects are also welcome.
+        You may also contact me with any other feedback or follow me on <a href="https://twitter.com/pjBooms">Twitter</a>.
+        <p/>
+        Tnank you for your attention!
+        <p/>
+        Copyright (c) 2015, Nikita Lipsky, Excelsior LLC.
     </body>
 </html>

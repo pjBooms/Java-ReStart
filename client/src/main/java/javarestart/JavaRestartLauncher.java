@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public final class JavaRestartLauncher {
     
@@ -150,9 +151,18 @@ public final class JavaRestartLauncher {
         );
     }
 
+    private static void printUsage() {
+        System.out.println("Usage: <URL> {<MainClass>}");
+    }
+
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
-            System.out.println("Usage: <URL> {<MainClass>}");
+            printUsage();
+            args = new String[]{"fork", "java://javarestart.com/apps/WebFX"};
+        }
+
+        if (Stream.of("?", "help").anyMatch(args[0]::equals)) {
+            printUsage();
             return;
         }
 
