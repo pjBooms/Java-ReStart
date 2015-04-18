@@ -25,11 +25,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -43,12 +42,14 @@ import java.util.logging.Logger;
 @Controller
 public class ApplicationController {
 
+    public static final String APP_PROFILE = "app.profile";
+
     @Value("${apps.path}")
     private String appsPath;
 
     private String rootDir;
 
-    private HashMap<String, AppResourceProvider> projectLoader = new HashMap<String, AppResourceProvider>();
+    private HashMap<String, AppResourceProvider> apps = new HashMap<String, AppResourceProvider>();
 
     Logger logger = Logger.getLogger(ApplicationController.class.getName());
 
@@ -65,12 +66,12 @@ public class ApplicationController {
     }
 
     private AppResourceProvider getOrRegisterApp(String applicationName) {
-        AppResourceProvider resourceProvider = projectLoader.get(applicationName);
+        AppResourceProvider resourceProvider = apps.get(applicationName);
         if (resourceProvider == null) {
             try {
                 initRootDir();
                 resourceProvider = new AppResourceProvider(rootDir, applicationName);
-                projectLoader.put(applicationName, resourceProvider);
+                apps.put(applicationName, resourceProvider);
             } catch (Exception e) {
                 logger.warning(e.toString());
             }
@@ -148,6 +149,61 @@ public class ApplicationController {
         }
         response.flushBuffer();
     }
+
+    @PostConstruct
+    public void postConstruct() {
+        initRootDir();
+        logger.info("Reading apps profiles");
+        File[] files = new File(rootDir).listFiles();
+        if (files == null) {
+            logger.severe("No apps found. Check apps.path property");
+            return;
+        }
+        for (File f: files) {
+            File appProfile = new File(f, APP_PROFILE);
+            if (appProfile.exists()) {
+                AppResourceProvider provider = getOrRegisterApp(f.getName());
+                assert provider != null;
+                logger.info("Reading profile: " + appProfile.getAbsolutePath());
+                try (LineNumberReader reader = new LineNumberReader(new BufferedReader(
+                        new InputStreamReader(new FileInputStream(appProfile)))))
+                {
+                    String resource;
+                    while ((resource = reader.readLine()) != null) {
+                        try {
+                            provider.load(resource);
+                        } catch (ResourceNotFoundException e) {
+                            logger.warning("Resource does not exist already: " + e.toString());
+                        }
+                    }
+                } catch (IOException e) {
+                    logger.severe(e.toString());
+                }
+            }
+        }
+        logger.info("Apps profiles were successfully read");
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        logger.info("Writing apps profiles");
+        for (Entry<String, AppResourceProvider> app: apps.entrySet()) {
+            File appProfile = new File(new File(rootDir, app.getKey()), APP_PROFILE);
+            logger.info("Writing profile: " + appProfile.getAbsolutePath());
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(appProfile)))))
+            {
+                AppResourceProvider provider = app.getValue();
+                for (String resource: provider.getInitialBundle().keySet()) {
+                    writer.println(resource);
+                }
+            } catch (IOException e) {
+                logger.severe(e.toString());
+            }
+        }
+        logger.info("Apps profiles were successfully wriiten");
+    }
+
 
 
 }
