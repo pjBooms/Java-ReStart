@@ -38,14 +38,20 @@ public class AppResourceProvider {
     private final LinkedHashMap<String, URL> loaded = new LinkedHashMap<>();
 
     //TODO: move to properties
-    private final String APPS_BASE_PATH = "/apps";
+    private static final String APPS_BASE_PATH = "/apps";
+
+    private static String contextPath;
+
+    public static void initContextPath(String contextPath) {
+        AppResourceProvider.contextPath = contextPath;
+    }
 
     public AppResourceProvider(String appPath, String projectName) throws Exception {
         final Properties appProps = new Properties();
         final File baseDir = new File(appPath, projectName);
         appProps.load(new BufferedInputStream(new FileInputStream(new File(baseDir, APP_PROPERTIES))));
         appDescriptor = new AppDescriptorDto();
-        appDescriptor.setRoot(APPS_BASE_PATH + '/' + projectName);
+        appDescriptor.setRoot(contextPath + APPS_BASE_PATH + '/' + projectName);
         appDescriptor.setMain(appProps.getProperty("main"));
         appDescriptor.setSplash(appProps.getProperty("splash"));
         appDescriptor.setSplashCloseOn(appProps.getProperty("splashCloseOn"));

@@ -21,12 +21,14 @@ import javarestart.appresourceprovider.AppResourceProvider;
 import javarestart.appresourceprovider.ResourceNotFoundException;
 import javarestart.dto.AppDescriptorDto;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URL;
@@ -49,11 +51,14 @@ public class ApplicationController {
 
     private String rootDir;
 
+    @Autowired
+    private ServletContext servletContext;
+
     private HashMap<String, AppResourceProvider> apps = new HashMap<String, AppResourceProvider>();
 
     Logger logger = Logger.getLogger(ApplicationController.class.getName());
 
-    private void initRootDir() {
+    private void initRootDirAndContext() {
         if (rootDir == null) {
             if (appsPath.startsWith("${user.home}")) {
                 rootDir = System.getProperty("user.home") + appsPath.substring("${user.home}".length());
@@ -61,7 +66,7 @@ public class ApplicationController {
             } else {
                 rootDir = appsPath;
             }
-
+            AppResourceProvider.initContextPath(servletContext.getContextPath());
         }
     }
 
@@ -69,7 +74,7 @@ public class ApplicationController {
         AppResourceProvider resourceProvider = apps.get(applicationName);
         if (resourceProvider == null) {
             try {
-                initRootDir();
+                initRootDirAndContext();
                 resourceProvider = new AppResourceProvider(rootDir, applicationName);
                 apps.put(applicationName, resourceProvider);
             } catch (Exception e) {
@@ -152,7 +157,7 @@ public class ApplicationController {
 
     @PostConstruct
     public void postConstruct() {
-        initRootDir();
+        initRootDirAndContext();
         logger.info("Reading apps profiles");
         File[] files = new File(rootDir).listFiles();
         if (files == null) {
