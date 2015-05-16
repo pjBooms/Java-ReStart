@@ -1,46 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?language javascript?>
 
+<?language javascript?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/2.2"
-            xmlns:fx="http://javafx.com/fxml"
-            id="AnchorPane"
-            maxHeight="1.7976931348623157E308" 
-            maxWidth="1.7976931348623157E308"
-            minHeight="-Infinity"
-            minWidth="-Infinity"
-            prefHeight="400.0"
-            prefWidth="600.0"
-            rotate="0.0"
-            snapToPixel="true"
-            >
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" rotate="0.0" snapToPixel="true" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <Pane prefHeight="372.0" prefWidth="590.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <Pane prefHeight="372.0" prefWidth="590.0" style="-fx-background-color: #ffffff;" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-        <Button fx:id="RestDemo" onAction="handleButtonAction(event);"  layoutX="63.0" layoutY="256.0" mnemonicParsing="false" prefHeight="54.6204833984375" prefWidth="146.0001220703125" text="REST Demo" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS">
-          <font>
-            <Font size="20.0" fx:id="x1"/>
-          </font>
-        </Button>
-        <Button fx:id="JavaRestart" onAction="handleButtonAction2(event,'JavaRestartDemo/JavaRestartDemo.fxml');" font="$x1" layoutX="63.0" layoutY="193.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="146.0001220703125" text="Java ReStart" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
-        <Button  fx:id="login" onAction="handleButtonAction2(event, 'login/login.fxml');" font="$x1" layoutX="224.0" layoutY="129.0" mnemonicParsing="false" prefHeight="54.620361328125" prefWidth="146.0" text="Login Demo" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
-        <Text layoutX="260.0" layoutY="72.0" scaleX="7.765235363215219" scaleY="5.985805355081321" strokeType="OUTSIDE" strokeWidth="0.0" text="WebFX" textAlignment="CENTER">
-          <font>
-            <Font name="SimHei" size="8.0" />
-          </font>
-        </Text>
-        <Button  fx:id="Game2048"  onAction="handleButtonAction(event);"  font="$x1" layoutX="63.0" layoutY="128.0" mnemonicParsing="false" prefHeight="54.6204833984375" prefWidth="146.00009155273438" text="2048" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
-        <Button  fx:id="Calendar" onAction="handleButtonAction(event);" font="$x1" layoutX="224.0" layoutY="193.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="146.0" text="Calendar" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
-        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="407.0" layoutY="138.0" pickOnBounds="true" preserveRatio="true">
-          <image>
-            <Image url="@java-duke-guitar.png" />
-          </image>
-        </ImageView>
-        <Button fx:id="WebFX" onAction="handleButtonAction(event);" font="$x1" layoutX="224.0" layoutY="256.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="146.0" text="WebFX" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+          <Text layoutX="260.0" layoutY="72.0" scaleX="7.765235363215219" scaleY="5.985805355081321" strokeType="OUTSIDE" strokeWidth="0.0" text="WebFX" textAlignment="CENTER">
+              <font>
+                  <Font name="SimHei" size="8.0" />
+              </font>
+          </Text>
+          <Button fx:id="Game2048" layoutX="63.0" layoutY="128.0" mnemonicParsing="false" onAction="handleButtonAction(event);" prefHeight="52.0" prefWidth="150.0" text="2048" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS">
+              <font>
+                  <Font size="20.0" fx:id="x1" />
+              </font>
+          </Button>
+          <Button fx:id="JavaRestart" font="$x1" layoutX="63.0" layoutY="193.0" mnemonicParsing="false" onAction="handleButtonAction2(event,'JavaRestartDemo/JavaRestartDemo.fxml');" prefHeight="52.0" prefWidth="150.0" text="Java ReStart" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+          <Button fx:id="RestDemo" font="$x1" layoutX="63.0" layoutY="256.0" mnemonicParsing="false" onAction="handleButtonAction(event);" prefHeight="52.0" prefWidth="150.0" text="REST Demo" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+          <Button fx:id="login" font="$x1" layoutX="224.0" layoutY="128.0" mnemonicParsing="false" onAction="handleButtonAction2(event, 'login/login.fxml');" prefHeight="52.0" prefWidth="150.0" text="Login Demo" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+          <Button fx:id="Calendar" font="$x1" layoutX="224.0" layoutY="193.0" mnemonicParsing="false" onAction="handleButtonAction(event);" prefHeight="52.0" prefWidth="150.0" text="Calendar" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+          <Button fx:id="WebFX" font="$x1" layoutX="224.0" layoutY="256.0" mnemonicParsing="false" onAction="handleButtonAction(event);" prefHeight="52.0" prefWidth="150.0" text="WebFX" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" />
+          <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="407.0" layoutY="138.0" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@java-duke-guitar.png" />
+              </image>
+          </ImageView>
       </children>
     </Pane>
   </children>

@@ -2,34 +2,26 @@
 
 <?language javascript?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import game2048.GameManager?>
+<?import game2048.GamePane?>
 <?import java.net.URL?>
 
-<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="300.0" xmlns:fx="http://javafx.com/fxml">
+<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="300.0" style="-fx-background-color: #faf8ef;" styleClass="background" xmlns:fx="http://javafx.com/fxml">
     <children>
-        <GameManager fx:id="gameManager"
-                     layoutX="-50.0"
-                     layoutY="-100.0"
+        <GamePane fx:id="gamePane"
+                     layoutX="-70.0"
+                     layoutY="-180.0"
                      scaleX="0.6"
                      scaleY="0.6"
                 />
-        <!--
-            layoutX="270.0"
-            layoutY="183.0"
-            AnchorPane.bottomAnchor="0"
-            AnchorPane.leftAnchor="0.0"
-            AnchorPane.rightAnchor="0.0"
-            AnchorPane.topAnchor="0.0" /-->
     </children>
 
     <fx:script source="2048.js" />
 
     <stylesheets>
         <URL value="@game2048/game.css"/>
-        <!--String value="game2048/game.css" /-->
     </stylesheets>
+
 
 </AnchorPane>

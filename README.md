@@ -148,8 +148,6 @@ It means that:
    
    wfx://javarestart.com/apps/Game2048
 
-   (tip: use WASD instead of arrows to play).
-   
    The demo is written in pure Java and behind the scence Java bytecode of the game is loaded that is referenced from the very simple main FXML page.
    This Java ReStart <-> WebFX integration allows you to write applications the same way as web applications but use FXML instead of HTML 
    and any programming language that is available on top of Java platform from Java, Scala to JavaScript, JRuby, etc., and without compromising performance or 
