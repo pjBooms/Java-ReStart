@@ -34,6 +34,7 @@ public class AppResourceProvider {
     private static final String APP_PROPERTIES = "app.properties";
     private final URLClassLoader loader;
     private final AppDescriptorDto appDescriptor;
+    private final IdeaClassLoaders ideaClassLoaders;
 
     private final LinkedHashMap<String, URL> loaded = new LinkedHashMap<>();
 
@@ -65,13 +66,20 @@ public class AppResourceProvider {
                 urls.add(new File(baseDir, classPathElement).toURI().toURL());
             }
         }
+        String ideaDesc = appProps.getProperty("ideaDesc");
+        ideaClassLoaders = ideaDesc == null ? null : new IdeaClassLoaders(new File(baseDir, ideaDesc));
         loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
     }
 
     public URLConnection load(final String resourceName) throws ResourceNotFoundException {
         URL result = null;
         try {
-            result = loader.findResource(resourceName);
+            if (ideaClassLoaders != null) {
+                result = ideaClassLoaders.getURL(resourceName);
+            }
+            if (result == null) {
+                result = loader.findResource(resourceName);
+            }
             if (result == null) {
                 throw new ResourceNotFoundException("Requested resource not found: " + resourceName);
             }
