@@ -92,33 +92,12 @@ of all samples becomes comparable lo local startup time! It is important explora
 It means that all that stuff that you have on your desktop computers is not actually needed:
 it can run from remote source as fast as locally!
 
-Java ReStart demo uses the protocol by default now
-(executing demos from remote server -- javarestart.com -- see below).
-My fork of WebFX also runs the demos using the protocol.
-
 Why are there two protocols?
   * `wfx://` protocol is used for loading the content into FXML page of a new tab of the WebFX browser.
   * `java://` protocol is used for launching remote applications using Java ReStart.
 
 How to use the protocols: add `-Djava.protocol.handler.pkgs=javarestart.protocols` JVM property to
 launching command to let JVM know the new protocols.
-
-Java ReStart on Jelastic
-=====
-The Java ReStart server with the sample applications is deployed now on Jelastic:
-
-http://javarestart.com/
-
-So you may run the samples above now with just Java ReStart client (no need to deploy on local server):
-
-```
-java -Djava.protocol.handler.pkgs=javarestart.protocols javarestart.JavaRestartLauncher java://javarestart.com/apps/<AppName>
-```
-
-Or via my fork of WebFX browser:
-
-point the browser to http://javarestart.com and click "Java Restart Demo" link.
-
 
 Adding your own applications
 =====
@@ -137,7 +116,7 @@ Java ReStart is integrated now with WebFX (https://github.com/pjBooms/webfx).
 It means that:
 
 1. You may launch Java ReStart applications from WebFX browser via java://`<BaseURL>` protocol.
-   You may try this via cope&paste to WebFX browser the following URL: java://javarestart.com/apps/Java2Demo
+   You may try this via cope&paste to WebFX browser the following URL: java://localhost:8080/apps/Java2Demo
 
 2. Additionally Java ReStart app descriptor is extended to provide a main FXML of a WebFX application (instead of a main class). 
    This way, when you reference your application as wfx://`<BaseURL>` from WebFX browser, the main FXML page is loaded in a new tab of the WebFX browser
@@ -146,7 +125,7 @@ It means that:
 
    Check out this URL in the WebFX browser: 
    
-   wfx://javarestart.com/apps/Game2048
+   wfx://localhost:8080/apps/Game2048
 
    The demo is written in pure Java and behind the scence Java bytecode of the game is loaded that is referenced from the very simple main FXML page.
    This Java ReStart <-> WebFX integration allows you to write applications the same way as web applications but use FXML instead of HTML 
